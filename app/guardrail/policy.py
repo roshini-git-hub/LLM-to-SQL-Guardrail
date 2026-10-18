@@ -19,3 +19,14 @@ ALLOWED_FUNCTIONS = {
 }
 
 MAX_LIMIT = 1000
+# --- Cost and risk thresholds (tune these later using evaluation results) ---
+SEQ_SCAN_ROWS = 100000      # warn on sequential scans estimated above this many rows
+HUGE_ROWS = 1000000         # warn if any plan step is estimated above this many rows
+CARTESIAN_MIN_ROWS = 10000  # ignore tiny cross joins
+
+COST_LOW = 20000            # planner cost units
+COST_MEDIUM = 100000
+COST_HIGH = 500000
+
+REVIEW_AT = 35              # risk score at or above this -> REVIEW
+BLOCK_AT = 70               # risk score at or above this -> BLOCK
