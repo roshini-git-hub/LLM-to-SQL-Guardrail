@@ -64,7 +64,7 @@ def validate(sql: str) -> ValidationResult:
 
     # 8. Functions: only allowlisted ones
     for func in tree.find_all(exp.Func):
-        if isinstance(func, (exp.Column, exp.Table)):
+        if isinstance(func, (exp.Column, exp.Table, exp.Connector)):
             continue
         fname = func.sql_name().lower()
         builtin_ok = fname in policy.ALLOWED_FUNCTIONS

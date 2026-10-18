@@ -55,7 +55,7 @@ def ast_only(sql):
 def full_guardrail(sql):
     """Validation + cost estimation + risk score + safe execution."""
     start = time.perf_counter()
-    response = run_query(sql)
+    response = run_query(sql, execute=False)
     flagged = response.decision != "ALLOW"
     return flagged, _ms(start)
 

@@ -38,7 +38,7 @@ st.dataframe(summary, use_container_width=True, hide_index=True)
 left, right = st.columns(2)
 with left:
     st.markdown("**Detection vs false positives (%)**")
-    st.bar_chart(summary.set_index("baseline")[["detection_rate", "false_positive_rate"]])
+    st.bar_chart(summary.set_index("baseline")[["detection_rate", "false_positive_rate"]], stack=False)
 with right:
     st.markdown("**Average latency (ms)**")
     st.bar_chart(summary.set_index("baseline")[["avg_latency_ms"]])

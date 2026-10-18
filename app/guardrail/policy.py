@@ -30,3 +30,9 @@ COST_HIGH = 500000
 
 REVIEW_AT = 35              # risk score at or above this -> REVIEW
 BLOCK_AT = 70               # risk score at or above this -> BLOCK
+
+# SQLGlot reports some functions under different names than the SQL text
+ALLOWED_FUNCTIONS |= {
+    "timestamp_trunc", "current_timestamp", "now",
+    "current_date", "current_time",
+}
