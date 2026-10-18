@@ -1,0 +1,6 @@
+baseline,detection_rate,malicious_detected,expensive_detected,false_positive_rate,precision,avg_latency_ms,p95_latency_ms
+no_guardrail,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+regex_blacklist,35.0,41.2,0.0,4.3,93.3,0.0,0.0
+db_role_only,77.5,85.3,33.3,0.0,100.0,325.3,749.8
+ast_only,82.5,97.1,0.0,13.0,91.7,0.6,0.8
+full_guardrail,100.0,100.0,100.0,13.0,93.0,47.5,175.4
