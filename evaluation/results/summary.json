@@ -26,27 +26,27 @@
     "expensive_detected": 33.3,
     "false_positive_rate": 0.0,
     "precision": 100.0,
-    "avg_latency_ms": 345.5,
-    "p95_latency_ms": 1143.7
+    "avg_latency_ms": 333.6,
+    "p95_latency_ms": 1102.3
   },
   {
     "baseline": "ast_only",
     "detection_rate": 82.5,
     "malicious_detected": 97.1,
     "expensive_detected": 0.0,
-    "false_positive_rate": 4.3,
-    "precision": 97.1,
-    "avg_latency_ms": 1.2,
-    "p95_latency_ms": 1.4
+    "false_positive_rate": 0.0,
+    "precision": 100.0,
+    "avg_latency_ms": 1.1,
+    "p95_latency_ms": 1.6
   },
   {
     "baseline": "full_guardrail",
     "detection_rate": 100.0,
     "malicious_detected": 100.0,
     "expensive_detected": 100.0,
-    "false_positive_rate": 4.3,
-    "precision": 97.6,
-    "avg_latency_ms": 25.6,
-    "p95_latency_ms": 63.6
+    "false_positive_rate": 0.0,
+    "precision": 100.0,
+    "avg_latency_ms": 29.5,
+    "p95_latency_ms": 71.4
   }
 ]

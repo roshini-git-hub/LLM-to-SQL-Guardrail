@@ -36,3 +36,6 @@ ALLOWED_FUNCTIONS |= {
     "timestamp_trunc", "current_timestamp", "now",
     "current_date", "current_time",
 }
+
+# Window functions
+ALLOWED_FUNCTIONS |= {"row_number", "rank", "dense_rank", "lag", "lead"}

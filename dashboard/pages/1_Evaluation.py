@@ -53,3 +53,16 @@ st.markdown(f"**Missed unsafe queries ({len(missed)})**")
 st.dataframe(missed[["label", "sql"]], use_container_width=True, hide_index=True)
 st.markdown(f"**False positives ({len(wrong)})**")
 st.dataframe(wrong[["sql"]], use_container_width=True, hide_index=True)
+
+# ---------------------------------------------------------------- held-out set
+holdout_path = RESULTS / "holdout_summary.csv"
+if holdout_path.exists():
+    st.markdown("---")
+    st.markdown("### Held-out test set")
+    st.caption("Queries written after the rules were designed, including evasion attempts.")
+    holdout = pd.read_csv(holdout_path)
+    st.dataframe(holdout, use_container_width=True, hide_index=True)
+    st.bar_chart(
+        holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
+        stack=False,
+    )

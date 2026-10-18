@@ -64,7 +64,7 @@ def validate(sql: str) -> ValidationResult:
 
     # 8. Functions: only allowlisted ones
     for func in tree.find_all(exp.Func):
-        if isinstance(func, (exp.Column, exp.Table, exp.Connector)):
+        if isinstance(func, (exp.Column, exp.Table, exp.Connector, exp.Case, exp.If, exp.Cast, exp.TryCast)):
             continue
         fname = func.sql_name().lower()
         builtin_ok = fname in policy.ALLOWED_FUNCTIONS
@@ -81,3 +81,4 @@ def validate(sql: str) -> ValidationResult:
             result.add("missing_limit", "warn", "No LIMIT on a non-aggregate query")
 
     return result
+

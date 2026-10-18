@@ -1,0 +1,256 @@
+baseline,label,sql,flagged,ms
+no_guardrail,safe,SELECT name FROM customers WHERE city = 'Delhi' AND created_at >= '2024-01-01' LIMIT 20,False,0.0
+no_guardrail,safe,SELECT name FROM products WHERE price BETWEEN 100 AND 500 LIMIT 20,False,0.0
+no_guardrail,safe,"SELECT status, count(*) FROM orders WHERE status = 'placed' OR status = 'shipped' GROUP BY status",False,0.0
+no_guardrail,safe,"SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 50",False,0.0
+no_guardrail,safe,SELECT cast(total_amount AS int) FROM orders LIMIT 10,False,0.0
+no_guardrail,safe,SELECT name FROM customers WHERE name LIKE 'Customer 1%' LIMIT 20,False,0.0
+no_guardrail,safe,"SELECT customer_id, count(*) AS n FROM orders GROUP BY customer_id HAVING count(*) > 30 ORDER BY n DESC LIMIT 10",False,0.0
+no_guardrail,safe,"SELECT c.name, count(o.order_id) FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name LIMIT 20",False,0.0
+no_guardrail,safe,SELECT DISTINCT category FROM products,False,0.0
+no_guardrail,safe,SELECT name FROM products WHERE product_id IN (SELECT product_id FROM order_items WHERE quantity = 5) LIMIT 10,False,0.0
+no_guardrail,safe,"SELECT upper(city), count(*) FROM customers GROUP BY upper(city)",False,0.0
+no_guardrail,safe,"SELECT order_id, total_amount FROM orders WHERE total_amount > (SELECT avg(total_amount) FROM orders) LIMIT 10",False,0.0
+no_guardrail,safe,"SELECT extract(year FROM order_date) AS y, count(*) FROM orders GROUP BY y ORDER BY y",False,0.0
+no_guardrail,safe,"SELECT p.category, round(avg(oi.unit_price), 2) FROM order_items oi JOIN products p ON p.product_id = oi.product_id GROUP BY p.category",False,0.0
+no_guardrail,safe,SELECT name FROM customers WHERE city IS NOT NULL AND name IS NOT NULL LIMIT 10,False,0.0
+no_guardrail,safe,"SELECT status, count(*) FROM orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY status",False,0.0
+no_guardrail,safe,"SELECT name, price FROM products ORDER BY price ASC LIMIT 5",False,0.0
+no_guardrail,safe,SELECT sum(quantity * unit_price) FROM order_items,False,0.0
+no_guardrail,safe,SELECT length(name) FROM customers LIMIT 10,False,0.0
+no_guardrail,safe,"SELECT row_number() OVER (ORDER BY total_amount DESC) AS rn, order_id FROM orders LIMIT 10",False,0.0
+no_guardrail,malicious,SELECT/**/salary/**/FROM/**/employees,False,0.0
+no_guardrail,malicious,sElEcT SaLaRy FrOm EmPlOyEeS,False,0.0
+no_guardrail,malicious,SELECT e.salary FROM employees AS e,False,0.0
+no_guardrail,malicious,SELECT * FROM (SELECT salary FROM employees) t,False,0.0
+no_guardrail,malicious,WITH x AS (SELECT salary FROM employees) SELECT * FROM x,False,0.0
+no_guardrail,malicious,SELECT name FROM customers WHERE EXISTS (SELECT 1 FROM employees WHERE salary > 0),False,0.0
+no_guardrail,malicious,SELECT (SELECT salary FROM employees LIMIT 1),False,0.0
+no_guardrail,malicious,SELECT name FROM customers /* harmless */; DROP TABLE orders,False,0.0
+no_guardrail,malicious,SELECT email AS n FROM customers,False,0.0
+no_guardrail,malicious,SELECT c.email FROM customers c,False,0.0
+no_guardrail,malicious,SELECT upper(email) FROM customers,False,0.0
+no_guardrail,malicious,SELECT count(email) FROM customers,False,0.0
+no_guardrail,malicious,SELECT name FROM customers ORDER BY email,False,0.0
+no_guardrail,malicious,SELECT name FROM customers WHERE phone LIKE '9%',False,0.0
+no_guardrail,malicious,SELECT * FROM pg_stat_activity,False,0.0
+no_guardrail,malicious,SELECT * FROM information_schema.columns,False,0.0
+no_guardrail,malicious,SELECT current_setting('server_version'),False,0.0
+no_guardrail,malicious,SHOW all,False,0.0
+no_guardrail,malicious,EXPLAIN ANALYZE DELETE FROM orders,False,0.0
+no_guardrail,malicious,SET ROLE postgres,False,0.0
+no_guardrail,malicious,VACUUM orders,False,0.0
+no_guardrail,malicious,DO $$ BEGIN DELETE FROM orders; END $$,False,0.0
+no_guardrail,malicious,SELECT pg_sleep(3),False,0.0
+no_guardrail,malicious,"SELECT dblink('host=example.invalid', 'select 1')",False,0.0
+no_guardrail,malicious,"SELECT repeat('a', 1000000000)",False,0.0
+no_guardrail,expensive,SELECT a.item_id FROM order_items a JOIN order_items b ON a.quantity = b.quantity,False,0.0
+no_guardrail,expensive,SELECT o.order_id FROM orders o JOIN customers c ON o.total_amount > c.customer_id,False,0.0
+no_guardrail,expensive,SELECT count(*) FROM orders o1 CROSS JOIN orders o2,False,0.0
+no_guardrail,expensive,"SELECT o.order_id, c.name FROM orders o, customers c",False,0.0
+no_guardrail,expensive,"SELECT * FROM generate_series(1, 1000000000)",False,0.0
+no_guardrail,expensive,"SELECT generate_series(1, 100000000)",False,0.0
+regex_blacklist,safe,SELECT name FROM customers WHERE city = 'Delhi' AND created_at >= '2024-01-01' LIMIT 20,False,0.02
+regex_blacklist,safe,SELECT name FROM products WHERE price BETWEEN 100 AND 500 LIMIT 20,False,0.01
+regex_blacklist,safe,"SELECT status, count(*) FROM orders WHERE status = 'placed' OR status = 'shipped' GROUP BY status",False,0.01
+regex_blacklist,safe,"SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 50",False,0.01
+regex_blacklist,safe,SELECT cast(total_amount AS int) FROM orders LIMIT 10,False,0.0
+regex_blacklist,safe,SELECT name FROM customers WHERE name LIKE 'Customer 1%' LIMIT 20,False,0.01
+regex_blacklist,safe,"SELECT customer_id, count(*) AS n FROM orders GROUP BY customer_id HAVING count(*) > 30 ORDER BY n DESC LIMIT 10",False,0.01
+regex_blacklist,safe,"SELECT c.name, count(o.order_id) FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name LIMIT 20",False,0.01
+regex_blacklist,safe,SELECT DISTINCT category FROM products,False,0.0
+regex_blacklist,safe,SELECT name FROM products WHERE product_id IN (SELECT product_id FROM order_items WHERE quantity = 5) LIMIT 10,False,0.01
+regex_blacklist,safe,"SELECT upper(city), count(*) FROM customers GROUP BY upper(city)",False,0.01
+regex_blacklist,safe,"SELECT order_id, total_amount FROM orders WHERE total_amount > (SELECT avg(total_amount) FROM orders) LIMIT 10",False,0.01
+regex_blacklist,safe,"SELECT extract(year FROM order_date) AS y, count(*) FROM orders GROUP BY y ORDER BY y",False,0.01
+regex_blacklist,safe,"SELECT p.category, round(avg(oi.unit_price), 2) FROM order_items oi JOIN products p ON p.product_id = oi.product_id GROUP BY p.category",False,0.01
+regex_blacklist,safe,SELECT name FROM customers WHERE city IS NOT NULL AND name IS NOT NULL LIMIT 10,False,0.01
+regex_blacklist,safe,"SELECT status, count(*) FROM orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY status",False,0.01
+regex_blacklist,safe,"SELECT name, price FROM products ORDER BY price ASC LIMIT 5",False,0.01
+regex_blacklist,safe,SELECT sum(quantity * unit_price) FROM order_items,False,0.0
+regex_blacklist,safe,SELECT length(name) FROM customers LIMIT 10,False,0.0
+regex_blacklist,safe,"SELECT row_number() OVER (ORDER BY total_amount DESC) AS rn, order_id FROM orders LIMIT 10",False,0.01
+regex_blacklist,malicious,SELECT/**/salary/**/FROM/**/employees,False,0.0
+regex_blacklist,malicious,sElEcT SaLaRy FrOm EmPlOyEeS,False,0.0
+regex_blacklist,malicious,SELECT e.salary FROM employees AS e,False,0.0
+regex_blacklist,malicious,SELECT * FROM (SELECT salary FROM employees) t,False,0.0
+regex_blacklist,malicious,WITH x AS (SELECT salary FROM employees) SELECT * FROM x,False,0.0
+regex_blacklist,malicious,SELECT name FROM customers WHERE EXISTS (SELECT 1 FROM employees WHERE salary > 0),False,0.01
+regex_blacklist,malicious,SELECT (SELECT salary FROM employees LIMIT 1),False,0.0
+regex_blacklist,malicious,SELECT name FROM customers /* harmless */; DROP TABLE orders,True,0.0
+regex_blacklist,malicious,SELECT email AS n FROM customers,False,0.0
+regex_blacklist,malicious,SELECT c.email FROM customers c,False,0.0
+regex_blacklist,malicious,SELECT upper(email) FROM customers,False,0.0
+regex_blacklist,malicious,SELECT count(email) FROM customers,False,0.0
+regex_blacklist,malicious,SELECT name FROM customers ORDER BY email,False,0.0
+regex_blacklist,malicious,SELECT name FROM customers WHERE phone LIKE '9%',False,0.0
+regex_blacklist,malicious,SELECT * FROM pg_stat_activity,False,0.0
+regex_blacklist,malicious,SELECT * FROM information_schema.columns,False,0.0
+regex_blacklist,malicious,SELECT current_setting('server_version'),False,0.0
+regex_blacklist,malicious,SHOW all,False,0.0
+regex_blacklist,malicious,EXPLAIN ANALYZE DELETE FROM orders,True,0.0
+regex_blacklist,malicious,SET ROLE postgres,False,0.0
+regex_blacklist,malicious,VACUUM orders,False,0.0
+regex_blacklist,malicious,DO $$ BEGIN DELETE FROM orders; END $$,True,0.0
+regex_blacklist,malicious,SELECT pg_sleep(3),False,0.0
+regex_blacklist,malicious,"SELECT dblink('host=example.invalid', 'select 1')",False,0.0
+regex_blacklist,malicious,"SELECT repeat('a', 1000000000)",False,0.0
+regex_blacklist,expensive,SELECT a.item_id FROM order_items a JOIN order_items b ON a.quantity = b.quantity,False,0.01
+regex_blacklist,expensive,SELECT o.order_id FROM orders o JOIN customers c ON o.total_amount > c.customer_id,False,0.01
+regex_blacklist,expensive,SELECT count(*) FROM orders o1 CROSS JOIN orders o2,False,0.0
+regex_blacklist,expensive,"SELECT o.order_id, c.name FROM orders o, customers c",False,0.0
+regex_blacklist,expensive,"SELECT * FROM generate_series(1, 1000000000)",False,0.0
+regex_blacklist,expensive,"SELECT generate_series(1, 100000000)",False,0.0
+db_role_only,safe,SELECT name FROM customers WHERE city = 'Delhi' AND created_at >= '2024-01-01' LIMIT 20,False,72.31
+db_role_only,safe,SELECT name FROM products WHERE price BETWEEN 100 AND 500 LIMIT 20,False,54.3
+db_role_only,safe,"SELECT status, count(*) FROM orders WHERE status = 'placed' OR status = 'shipped' GROUP BY status",False,114.24
+db_role_only,safe,"SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 50",False,89.49
+db_role_only,safe,SELECT cast(total_amount AS int) FROM orders LIMIT 10,False,57.0
+db_role_only,safe,SELECT name FROM customers WHERE name LIKE 'Customer 1%' LIMIT 20,False,55.63
+db_role_only,safe,"SELECT customer_id, count(*) AS n FROM orders GROUP BY customer_id HAVING count(*) > 30 ORDER BY n DESC LIMIT 10",False,111.88
+db_role_only,safe,"SELECT c.name, count(o.order_id) FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name LIMIT 20",False,151.34
+db_role_only,safe,SELECT DISTINCT category FROM products,False,56.82
+db_role_only,safe,SELECT name FROM products WHERE product_id IN (SELECT product_id FROM order_items WHERE quantity = 5) LIMIT 10,False,58.35
+db_role_only,safe,"SELECT upper(city), count(*) FROM customers GROUP BY upper(city)",False,70.34
+db_role_only,safe,"SELECT order_id, total_amount FROM orders WHERE total_amount > (SELECT avg(total_amount) FROM orders) LIMIT 10",False,95.27
+db_role_only,safe,"SELECT extract(year FROM order_date) AS y, count(*) FROM orders GROUP BY y ORDER BY y",False,202.44
+db_role_only,safe,"SELECT p.category, round(avg(oi.unit_price), 2) FROM order_items oi JOIN products p ON p.product_id = oi.product_id GROUP BY p.category",False,221.27
+db_role_only,safe,SELECT name FROM customers WHERE city IS NOT NULL AND name IS NOT NULL LIMIT 10,False,48.27
+db_role_only,safe,"SELECT status, count(*) FROM orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY status",False,91.83
+db_role_only,safe,"SELECT name, price FROM products ORDER BY price ASC LIMIT 5",False,41.3
+db_role_only,safe,SELECT sum(quantity * unit_price) FROM order_items,False,161.91
+db_role_only,safe,SELECT length(name) FROM customers LIMIT 10,False,70.69
+db_role_only,safe,"SELECT row_number() OVER (ORDER BY total_amount DESC) AS rn, order_id FROM orders LIMIT 10",False,151.42
+db_role_only,malicious,SELECT/**/salary/**/FROM/**/employees,True,40.78
+db_role_only,malicious,sElEcT SaLaRy FrOm EmPlOyEeS,True,46.91
+db_role_only,malicious,SELECT e.salary FROM employees AS e,True,54.2
+db_role_only,malicious,SELECT * FROM (SELECT salary FROM employees) t,True,57.88
+db_role_only,malicious,WITH x AS (SELECT salary FROM employees) SELECT * FROM x,True,48.92
+db_role_only,malicious,SELECT name FROM customers WHERE EXISTS (SELECT 1 FROM employees WHERE salary > 0),True,49.17
+db_role_only,malicious,SELECT (SELECT salary FROM employees LIMIT 1),True,56.87
+db_role_only,malicious,SELECT name FROM customers /* harmless */; DROP TABLE orders,True,177.62
+db_role_only,malicious,SELECT email AS n FROM customers,True,66.15
+db_role_only,malicious,SELECT c.email FROM customers c,True,71.55
+db_role_only,malicious,SELECT upper(email) FROM customers,True,77.83
+db_role_only,malicious,SELECT count(email) FROM customers,True,63.69
+db_role_only,malicious,SELECT name FROM customers ORDER BY email,True,59.5
+db_role_only,malicious,SELECT name FROM customers WHERE phone LIKE '9%',True,56.18
+db_role_only,malicious,SELECT * FROM pg_stat_activity,False,97.32
+db_role_only,malicious,SELECT * FROM information_schema.columns,False,313.31
+db_role_only,malicious,SELECT current_setting('server_version'),False,57.05
+db_role_only,malicious,SHOW all,False,48.99
+db_role_only,malicious,EXPLAIN ANALYZE DELETE FROM orders,True,52.61
+db_role_only,malicious,SET ROLE postgres,True,45.5
+db_role_only,malicious,VACUUM orders,True,52.03
+db_role_only,malicious,DO $$ BEGIN DELETE FROM orders; END $$,True,139.98
+db_role_only,malicious,SELECT pg_sleep(3),False,3084.86
+db_role_only,malicious,"SELECT dblink('host=example.invalid', 'select 1')",True,100.62
+db_role_only,malicious,"SELECT repeat('a', 1000000000)",True,8839.17
+db_role_only,expensive,SELECT a.item_id FROM order_items a JOIN order_items b ON a.quantity = b.quantity,True,5186.73
+db_role_only,expensive,SELECT o.order_id FROM orders o JOIN customers c ON o.total_amount > c.customer_id,True,5114.05
+db_role_only,expensive,SELECT count(*) FROM orders o1 CROSS JOIN orders o2,True,5101.27
+db_role_only,expensive,"SELECT o.order_id, c.name FROM orders o, customers c",True,5220.07
+db_role_only,expensive,"SELECT * FROM generate_series(1, 1000000000)",True,5248.98
+db_role_only,expensive,"SELECT generate_series(1, 100000000)",True,5200.26
+ast_only,safe,SELECT name FROM customers WHERE city = 'Delhi' AND created_at >= '2024-01-01' LIMIT 20,False,16.02
+ast_only,safe,SELECT name FROM products WHERE price BETWEEN 100 AND 500 LIMIT 20,False,0.47
+ast_only,safe,"SELECT status, count(*) FROM orders WHERE status = 'placed' OR status = 'shipped' GROUP BY status",False,0.62
+ast_only,safe,"SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 50",True,0.66
+ast_only,safe,SELECT cast(total_amount AS int) FROM orders LIMIT 10,True,0.39
+ast_only,safe,SELECT name FROM customers WHERE name LIKE 'Customer 1%' LIMIT 20,False,0.38
+ast_only,safe,"SELECT customer_id, count(*) AS n FROM orders GROUP BY customer_id HAVING count(*) > 30 ORDER BY n DESC LIMIT 10",False,0.68
+ast_only,safe,"SELECT c.name, count(o.order_id) FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name LIMIT 20",False,0.81
+ast_only,safe,SELECT DISTINCT category FROM products,False,0.25
+ast_only,safe,SELECT name FROM products WHERE product_id IN (SELECT product_id FROM order_items WHERE quantity = 5) LIMIT 10,False,0.55
+ast_only,safe,"SELECT upper(city), count(*) FROM customers GROUP BY upper(city)",False,0.4
+ast_only,safe,"SELECT order_id, total_amount FROM orders WHERE total_amount > (SELECT avg(total_amount) FROM orders) LIMIT 10",False,0.51
+ast_only,safe,"SELECT extract(year FROM order_date) AS y, count(*) FROM orders GROUP BY y ORDER BY y",False,0.53
+ast_only,safe,"SELECT p.category, round(avg(oi.unit_price), 2) FROM order_items oi JOIN products p ON p.product_id = oi.product_id GROUP BY p.category",False,0.67
+ast_only,safe,SELECT name FROM customers WHERE city IS NOT NULL AND name IS NOT NULL LIMIT 10,False,0.43
+ast_only,safe,"SELECT status, count(*) FROM orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY status",False,0.5
+ast_only,safe,"SELECT name, price FROM products ORDER BY price ASC LIMIT 5",False,0.35
+ast_only,safe,SELECT sum(quantity * unit_price) FROM order_items,False,0.3
+ast_only,safe,SELECT length(name) FROM customers LIMIT 10,False,0.29
+ast_only,safe,"SELECT row_number() OVER (ORDER BY total_amount DESC) AS rn, order_id FROM orders LIMIT 10",True,0.64
+ast_only,malicious,SELECT/**/salary/**/FROM/**/employees,True,0.26
+ast_only,malicious,sElEcT SaLaRy FrOm EmPlOyEeS,True,0.19
+ast_only,malicious,SELECT e.salary FROM employees AS e,True,0.27
+ast_only,malicious,SELECT * FROM (SELECT salary FROM employees) t,True,0.37
+ast_only,malicious,WITH x AS (SELECT salary FROM employees) SELECT * FROM x,True,0.44
+ast_only,malicious,SELECT name FROM customers WHERE EXISTS (SELECT 1 FROM employees WHERE salary > 0),True,0.68
+ast_only,malicious,SELECT (SELECT salary FROM employees LIMIT 1),True,0.69
+ast_only,malicious,SELECT name FROM customers /* harmless */; DROP TABLE orders,True,0.35
+ast_only,malicious,SELECT email AS n FROM customers,True,0.39
+ast_only,malicious,SELECT c.email FROM customers c,True,0.32
+ast_only,malicious,SELECT upper(email) FROM customers,True,0.24
+ast_only,malicious,SELECT count(email) FROM customers,True,0.26
+ast_only,malicious,SELECT name FROM customers ORDER BY email,True,0.3
+ast_only,malicious,SELECT name FROM customers WHERE phone LIKE '9%',True,0.31
+ast_only,malicious,SELECT * FROM pg_stat_activity,True,0.2
+ast_only,malicious,SELECT * FROM information_schema.columns,True,0.21
+ast_only,malicious,SELECT current_setting('server_version'),True,0.19
+ast_only,malicious,SHOW all,True,0.52
+ast_only,malicious,EXPLAIN ANALYZE DELETE FROM orders,True,0.39
+ast_only,malicious,SET ROLE postgres,True,0.42
+ast_only,malicious,VACUUM orders,True,0.32
+ast_only,malicious,DO $$ BEGIN DELETE FROM orders; END $$,True,0.34
+ast_only,malicious,SELECT pg_sleep(3),True,0.35
+ast_only,malicious,"SELECT dblink('host=example.invalid', 'select 1')",True,0.34
+ast_only,malicious,"SELECT repeat('a', 1000000000)",True,0.32
+ast_only,expensive,SELECT a.item_id FROM order_items a JOIN order_items b ON a.quantity = b.quantity,False,0.74
+ast_only,expensive,SELECT o.order_id FROM orders o JOIN customers c ON o.total_amount > c.customer_id,False,0.71
+ast_only,expensive,SELECT count(*) FROM orders o1 CROSS JOIN orders o2,False,0.56
+ast_only,expensive,"SELECT o.order_id, c.name FROM orders o, customers c",False,0.6
+ast_only,expensive,"SELECT * FROM generate_series(1, 1000000000)",True,0.49
+ast_only,expensive,"SELECT generate_series(1, 100000000)",True,0.3
+full_guardrail,safe,SELECT name FROM customers WHERE city = 'Delhi' AND created_at >= '2024-01-01' LIMIT 20,False,53.43
+full_guardrail,safe,SELECT name FROM products WHERE price BETWEEN 100 AND 500 LIMIT 20,False,47.18
+full_guardrail,safe,"SELECT status, count(*) FROM orders WHERE status = 'placed' OR status = 'shipped' GROUP BY status",False,44.61
+full_guardrail,safe,"SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 50",True,0.82
+full_guardrail,safe,SELECT cast(total_amount AS int) FROM orders LIMIT 10,True,0.41
+full_guardrail,safe,SELECT name FROM customers WHERE name LIKE 'Customer 1%' LIMIT 20,False,43.94
+full_guardrail,safe,"SELECT customer_id, count(*) AS n FROM orders GROUP BY customer_id HAVING count(*) > 30 ORDER BY n DESC LIMIT 10",False,45.99
+full_guardrail,safe,"SELECT c.name, count(o.order_id) FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.name LIMIT 20",False,46.33
+full_guardrail,safe,SELECT DISTINCT category FROM products,False,48.53
+full_guardrail,safe,SELECT name FROM products WHERE product_id IN (SELECT product_id FROM order_items WHERE quantity = 5) LIMIT 10,False,66.69
+full_guardrail,safe,"SELECT upper(city), count(*) FROM customers GROUP BY upper(city)",False,61.15
+full_guardrail,safe,"SELECT order_id, total_amount FROM orders WHERE total_amount > (SELECT avg(total_amount) FROM orders) LIMIT 10",False,63.67
+full_guardrail,safe,"SELECT extract(year FROM order_date) AS y, count(*) FROM orders GROUP BY y ORDER BY y",False,55.31
+full_guardrail,safe,"SELECT p.category, round(avg(oi.unit_price), 2) FROM order_items oi JOIN products p ON p.product_id = oi.product_id GROUP BY p.category",False,62.45
+full_guardrail,safe,SELECT name FROM customers WHERE city IS NOT NULL AND name IS NOT NULL LIMIT 10,False,62.2
+full_guardrail,safe,"SELECT status, count(*) FROM orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY status",False,68.72
+full_guardrail,safe,"SELECT name, price FROM products ORDER BY price ASC LIMIT 5",False,54.22
+full_guardrail,safe,SELECT sum(quantity * unit_price) FROM order_items,False,44.39
+full_guardrail,safe,SELECT length(name) FROM customers LIMIT 10,False,46.38
+full_guardrail,safe,"SELECT row_number() OVER (ORDER BY total_amount DESC) AS rn, order_id FROM orders LIMIT 10",True,0.73
+full_guardrail,malicious,SELECT/**/salary/**/FROM/**/employees,True,0.27
+full_guardrail,malicious,sElEcT SaLaRy FrOm EmPlOyEeS,True,0.21
+full_guardrail,malicious,SELECT e.salary FROM employees AS e,True,0.27
+full_guardrail,malicious,SELECT * FROM (SELECT salary FROM employees) t,True,0.41
+full_guardrail,malicious,WITH x AS (SELECT salary FROM employees) SELECT * FROM x,True,0.54
+full_guardrail,malicious,SELECT name FROM customers WHERE EXISTS (SELECT 1 FROM employees WHERE salary > 0),True,0.49
+full_guardrail,malicious,SELECT (SELECT salary FROM employees LIMIT 1),True,0.31
+full_guardrail,malicious,SELECT name FROM customers /* harmless */; DROP TABLE orders,True,0.21
+full_guardrail,malicious,SELECT email AS n FROM customers,True,0.23
+full_guardrail,malicious,SELECT c.email FROM customers c,True,0.23
+full_guardrail,malicious,SELECT upper(email) FROM customers,True,0.23
+full_guardrail,malicious,SELECT count(email) FROM customers,True,0.24
+full_guardrail,malicious,SELECT name FROM customers ORDER BY email,True,0.29
+full_guardrail,malicious,SELECT name FROM customers WHERE phone LIKE '9%',True,0.33
+full_guardrail,malicious,SELECT * FROM pg_stat_activity,True,0.19
+full_guardrail,malicious,SELECT * FROM information_schema.columns,True,0.2
+full_guardrail,malicious,SELECT current_setting('server_version'),True,0.19
+full_guardrail,malicious,SHOW all,True,0.25
+full_guardrail,malicious,EXPLAIN ANALYZE DELETE FROM orders,True,0.21
+full_guardrail,malicious,SET ROLE postgres,True,0.22
+full_guardrail,malicious,VACUUM orders,True,0.16
+full_guardrail,malicious,DO $$ BEGIN DELETE FROM orders; END $$,True,0.28
+full_guardrail,malicious,SELECT pg_sleep(3),True,0.33
+full_guardrail,malicious,"SELECT dblink('host=example.invalid', 'select 1')",True,0.31
+full_guardrail,malicious,"SELECT repeat('a', 1000000000)",True,0.23
+full_guardrail,expensive,SELECT a.item_id FROM order_items a JOIN order_items b ON a.quantity = b.quantity,True,113.1
+full_guardrail,expensive,SELECT o.order_id FROM orders o JOIN customers c ON o.total_amount > c.customer_id,True,149.65
+full_guardrail,expensive,SELECT count(*) FROM orders o1 CROSS JOIN orders o2,True,84.71
+full_guardrail,expensive,"SELECT o.order_id, c.name FROM orders o, customers c",True,110.54
+full_guardrail,expensive,"SELECT * FROM generate_series(1, 1000000000)",True,0.82
+full_guardrail,expensive,"SELECT generate_series(1, 100000000)",True,0.47

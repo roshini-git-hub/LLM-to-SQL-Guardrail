@@ -74,8 +74,8 @@ regex_blacklist,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JO
 regex_blacklist,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,0.01
 regex_blacklist,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,0.0
 regex_blacklist,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,0.0
-regex_blacklist,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,0.0
-regex_blacklist,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,0.0
+regex_blacklist,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,0.01
+regex_blacklist,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,0.01
 regex_blacklist,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,0.01
 regex_blacklist,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,0.01
 regex_blacklist,safe,SELECT lower(name) FROM customers LIMIT 10,False,0.0
@@ -84,7 +84,7 @@ regex_blacklist,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FR
 regex_blacklist,safe,SELECT count(DISTINCT customer_id) FROM orders,False,0.0
 regex_blacklist,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,0.0
 regex_blacklist,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,0.0
-regex_blacklist,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,True,0.01
+regex_blacklist,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,True,0.0
 regex_blacklist,malicious,DROP TABLE orders,True,0.0
 regex_blacklist,malicious,DELETE FROM orders,True,0.0
 regex_blacklist,malicious,DELETE FROM orders WHERE 1=1,True,0.0
@@ -125,192 +125,192 @@ regex_blacklist,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items 
 regex_blacklist,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",False,0.0
 regex_blacklist,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",False,0.0
 regex_blacklist,expensive,SELECT * FROM order_items,False,0.0
-db_role_only,safe,"SELECT name, city FROM customers LIMIT 10",False,67.02
-db_role_only,safe,SELECT count(*) FROM orders,False,65.68
-db_role_only,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,111.24
-db_role_only,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,53.46
-db_role_only,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,52.09
-db_role_only,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,57.28
-db_role_only,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,185.06
-db_role_only,safe,SELECT count(*) FROM order_items WHERE quantity > 3,False,133.4
-db_role_only,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,177.46
-db_role_only,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,149.95
-db_role_only,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,119.86
-db_role_only,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,52.87
-db_role_only,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,263.21
-db_role_only,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,175.07
-db_role_only,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,58.87
-db_role_only,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,156.95
-db_role_only,safe,SELECT lower(name) FROM customers LIMIT 10,False,66.0
-db_role_only,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,127.52
-db_role_only,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,121.9
-db_role_only,safe,SELECT count(DISTINCT customer_id) FROM orders,False,155.91
-db_role_only,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,61.48
-db_role_only,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,57.41
-db_role_only,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,False,57.8
-db_role_only,malicious,DROP TABLE orders,True,54.77
-db_role_only,malicious,DELETE FROM orders,True,57.47
-db_role_only,malicious,DELETE FROM orders WHERE 1=1,True,52.79
-db_role_only,malicious,UPDATE orders SET status = 'cancelled',True,57.12
-db_role_only,malicious,INSERT INTO products (name) VALUES ('x'),True,61.08
-db_role_only,malicious,TRUNCATE orders,True,59.14
-db_role_only,malicious,ALTER TABLE orders ADD COLUMN x int,True,58.08
-db_role_only,malicious,CREATE TABLE evil (a int),True,51.95
-db_role_only,malicious,GRANT ALL ON orders TO PUBLIC,True,55.41
-db_role_only,malicious,COPY orders TO '/tmp/orders.csv',True,179.67
-db_role_only,malicious,SELECT * FROM orders; DROP TABLE orders,True,215.33
-db_role_only,malicious,SELECT name FROM customers; DELETE FROM orders,True,59.19
-db_role_only,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,56.32
-db_role_only,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,52.01
-db_role_only,malicious,SELECT salary FROM employees,True,48.14
-db_role_only,malicious,SELECT * FROM employees,True,49.38
-db_role_only,malicious,"SELECT ""salary"" FROM ""employees""",True,57.26
-db_role_only,malicious,SELECT salary FROM public.employees,True,56.44
-db_role_only,malicious,SELECT email FROM customers LIMIT 5,True,55.3
-db_role_only,malicious,SELECT phone FROM customers LIMIT 5,True,47.04
-db_role_only,malicious,"SELECT name, email FROM customers",True,50.19
-db_role_only,malicious,SELECT EMAIL FROM CUSTOMERS,True,53.17
-db_role_only,malicious,SELECT * FROM customers,True,53.13
-db_role_only,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,56.32
-db_role_only,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,54.5
-db_role_only,malicious,SELECT * FROM pg_catalog.pg_user,False,52.25
-db_role_only,malicious,SELECT usename FROM pg_shadow,True,49.94
-db_role_only,malicious,SELECT table_name FROM information_schema.tables,False,59.91
-db_role_only,malicious,SELECT version(),False,49.74
-db_role_only,malicious,SELECT current_user,False,54.34
-db_role_only,malicious,SELECT pg_sleep(10),True,5052.6
-db_role_only,malicious,SELECT pg_read_file('/etc/passwd'),True,81.22
-db_role_only,malicious,SELECT lo_import('/etc/passwd'),True,59.46
-db_role_only,malicious,"SELECT set_config('app.x', 'y', false)",False,59.71
-db_role_only,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",True,5333.98
-db_role_only,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",True,5325.6
-db_role_only,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",False,51.59
-db_role_only,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",False,57.54
-db_role_only,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",False,58.54
-db_role_only,expensive,SELECT * FROM order_items,False,1241.55
-ast_only,safe,"SELECT name, city FROM customers LIMIT 10",False,31.42
-ast_only,safe,SELECT count(*) FROM orders,False,0.97
-ast_only,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,1.16
-ast_only,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,1.23
-ast_only,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,1.27
-ast_only,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,1.06
-ast_only,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,1.72
+db_role_only,safe,"SELECT name, city FROM customers LIMIT 10",False,67.54
+db_role_only,safe,SELECT count(*) FROM orders,False,73.17
+db_role_only,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,109.61
+db_role_only,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,52.24
+db_role_only,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,50.82
+db_role_only,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,56.44
+db_role_only,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,143.47
+db_role_only,safe,SELECT count(*) FROM order_items WHERE quantity > 3,False,136.04
+db_role_only,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,224.69
+db_role_only,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,149.71
+db_role_only,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,113.51
+db_role_only,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,49.97
+db_role_only,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,107.06
+db_role_only,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,49.06
+db_role_only,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,49.06
+db_role_only,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,134.13
+db_role_only,safe,SELECT lower(name) FROM customers LIMIT 10,False,53.57
+db_role_only,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,115.78
+db_role_only,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,106.64
+db_role_only,safe,SELECT count(DISTINCT customer_id) FROM orders,False,125.65
+db_role_only,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,42.52
+db_role_only,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,41.6
+db_role_only,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,False,46.3
+db_role_only,malicious,DROP TABLE orders,True,47.59
+db_role_only,malicious,DELETE FROM orders,True,43.88
+db_role_only,malicious,DELETE FROM orders WHERE 1=1,True,42.86
+db_role_only,malicious,UPDATE orders SET status = 'cancelled',True,44.68
+db_role_only,malicious,INSERT INTO products (name) VALUES ('x'),True,42.04
+db_role_only,malicious,TRUNCATE orders,True,47.61
+db_role_only,malicious,ALTER TABLE orders ADD COLUMN x int,True,43.09
+db_role_only,malicious,CREATE TABLE evil (a int),True,41.0
+db_role_only,malicious,GRANT ALL ON orders TO PUBLIC,True,45.19
+db_role_only,malicious,COPY orders TO '/tmp/orders.csv',True,48.88
+db_role_only,malicious,SELECT * FROM orders; DROP TABLE orders,True,177.19
+db_role_only,malicious,SELECT name FROM customers; DELETE FROM orders,True,47.86
+db_role_only,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,45.23
+db_role_only,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,40.9
+db_role_only,malicious,SELECT salary FROM employees,True,44.37
+db_role_only,malicious,SELECT * FROM employees,True,39.85
+db_role_only,malicious,"SELECT ""salary"" FROM ""employees""",True,39.47
+db_role_only,malicious,SELECT salary FROM public.employees,True,42.46
+db_role_only,malicious,SELECT email FROM customers LIMIT 5,True,47.63
+db_role_only,malicious,SELECT phone FROM customers LIMIT 5,True,64.73
+db_role_only,malicious,"SELECT name, email FROM customers",True,58.83
+db_role_only,malicious,SELECT EMAIL FROM CUSTOMERS,True,49.93
+db_role_only,malicious,SELECT * FROM customers,True,48.99
+db_role_only,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,52.33
+db_role_only,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,47.01
+db_role_only,malicious,SELECT * FROM pg_catalog.pg_user,False,59.64
+db_role_only,malicious,SELECT usename FROM pg_shadow,True,52.04
+db_role_only,malicious,SELECT table_name FROM information_schema.tables,False,63.21
+db_role_only,malicious,SELECT version(),False,51.64
+db_role_only,malicious,SELECT current_user,False,43.89
+db_role_only,malicious,SELECT pg_sleep(10),True,5048.62
+db_role_only,malicious,SELECT pg_read_file('/etc/passwd'),True,75.77
+db_role_only,malicious,SELECT lo_import('/etc/passwd'),True,183.54
+db_role_only,malicious,"SELECT set_config('app.x', 'y', false)",False,67.45
+db_role_only,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",True,5287.43
+db_role_only,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",True,5311.65
+db_role_only,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",False,62.43
+db_role_only,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",False,56.9
+db_role_only,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",False,61.46
+db_role_only,expensive,SELECT * FROM order_items,False,1199.81
+ast_only,safe,"SELECT name, city FROM customers LIMIT 10",False,26.32
+ast_only,safe,SELECT count(*) FROM orders,False,1.58
+ast_only,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,0.95
+ast_only,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,0.76
+ast_only,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,0.82
+ast_only,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,0.7
+ast_only,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,1.39
 ast_only,safe,SELECT count(*) FROM order_items WHERE quantity > 3,False,0.73
-ast_only,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,1.22
-ast_only,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,1.1
-ast_only,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,0.68
-ast_only,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,0.65
-ast_only,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,0.79
-ast_only,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,0.71
-ast_only,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,1.12
-ast_only,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,1.15
-ast_only,safe,SELECT lower(name) FROM customers LIMIT 10,False,0.57
-ast_only,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,0.79
-ast_only,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,1.38
-ast_only,safe,SELECT count(DISTINCT customer_id) FROM orders,False,0.54
-ast_only,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,0.76
+ast_only,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,1.4
+ast_only,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,1.21
+ast_only,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,0.72
+ast_only,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,0.75
+ast_only,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,0.78
+ast_only,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,0.72
+ast_only,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,1.71
+ast_only,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,1.51
+ast_only,safe,SELECT lower(name) FROM customers LIMIT 10,False,0.69
+ast_only,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,0.89
+ast_only,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,1.86
+ast_only,safe,SELECT count(DISTINCT customer_id) FROM orders,False,0.65
+ast_only,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,0.96
 ast_only,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,0.76
-ast_only,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,True,1.0
-ast_only,malicious,DROP TABLE orders,True,0.22
-ast_only,malicious,DELETE FROM orders,True,0.24
-ast_only,malicious,DELETE FROM orders WHERE 1=1,True,0.55
-ast_only,malicious,UPDATE orders SET status = 'cancelled',True,0.5
-ast_only,malicious,INSERT INTO products (name) VALUES ('x'),True,0.55
-ast_only,malicious,TRUNCATE orders,True,0.24
-ast_only,malicious,ALTER TABLE orders ADD COLUMN x int,True,0.51
-ast_only,malicious,CREATE TABLE evil (a int),True,0.51
-ast_only,malicious,GRANT ALL ON orders TO PUBLIC,True,0.33
-ast_only,malicious,COPY orders TO '/tmp/orders.csv',True,0.29
-ast_only,malicious,SELECT * FROM orders; DROP TABLE orders,True,0.55
-ast_only,malicious,SELECT name FROM customers; DELETE FROM orders,True,0.57
-ast_only,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,0.79
-ast_only,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,1.45
-ast_only,malicious,SELECT salary FROM employees,True,0.58
-ast_only,malicious,SELECT * FROM employees,True,0.59
-ast_only,malicious,"SELECT ""salary"" FROM ""employees""",True,0.57
-ast_only,malicious,SELECT salary FROM public.employees,True,0.6
-ast_only,malicious,SELECT email FROM customers LIMIT 5,True,0.66
-ast_only,malicious,SELECT phone FROM customers LIMIT 5,True,1.02
-ast_only,malicious,"SELECT name, email FROM customers",True,0.77
-ast_only,malicious,SELECT EMAIL FROM CUSTOMERS,True,0.6
-ast_only,malicious,SELECT * FROM customers,False,0.55
-ast_only,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,1.07
-ast_only,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,1.17
-ast_only,malicious,SELECT * FROM pg_catalog.pg_user,True,0.51
-ast_only,malicious,SELECT usename FROM pg_shadow,True,0.38
-ast_only,malicious,SELECT table_name FROM information_schema.tables,True,0.38
-ast_only,malicious,SELECT version(),True,0.32
-ast_only,malicious,SELECT current_user,True,0.26
-ast_only,malicious,SELECT pg_sleep(10),True,0.32
-ast_only,malicious,SELECT pg_read_file('/etc/passwd'),True,0.36
-ast_only,malicious,SELECT lo_import('/etc/passwd'),True,0.32
-ast_only,malicious,"SELECT set_config('app.x', 'y', false)",True,0.4
-ast_only,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",False,0.75
-ast_only,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",False,0.76
-ast_only,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",False,0.63
-ast_only,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",False,0.71
-ast_only,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",False,1.39
-ast_only,expensive,SELECT * FROM order_items,False,0.52
-full_guardrail,safe,"SELECT name, city FROM customers LIMIT 10",False,56.03
-full_guardrail,safe,SELECT count(*) FROM orders,False,61.53
-full_guardrail,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,61.82
-full_guardrail,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,60.24
-full_guardrail,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,74.89
-full_guardrail,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,60.34
-full_guardrail,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,61.04
-full_guardrail,safe,SELECT count(*) FROM order_items WHERE quantity > 3,False,56.03
-full_guardrail,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,54.22
-full_guardrail,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,52.54
-full_guardrail,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,51.49
-full_guardrail,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,64.53
-full_guardrail,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,65.09
-full_guardrail,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,55.46
-full_guardrail,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,57.38
-full_guardrail,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,63.77
-full_guardrail,safe,SELECT lower(name) FROM customers LIMIT 10,False,56.2
-full_guardrail,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,56.28
-full_guardrail,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,48.11
-full_guardrail,safe,SELECT count(DISTINCT customer_id) FROM orders,False,48.57
-full_guardrail,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,55.89
-full_guardrail,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,45.38
-full_guardrail,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,True,0.84
-full_guardrail,malicious,DROP TABLE orders,True,0.14
-full_guardrail,malicious,DELETE FROM orders,True,0.37
-full_guardrail,malicious,DELETE FROM orders WHERE 1=1,True,0.29
-full_guardrail,malicious,UPDATE orders SET status = 'cancelled',True,0.44
-full_guardrail,malicious,INSERT INTO products (name) VALUES ('x'),True,0.34
-full_guardrail,malicious,TRUNCATE orders,True,0.19
-full_guardrail,malicious,ALTER TABLE orders ADD COLUMN x int,True,0.3
-full_guardrail,malicious,CREATE TABLE evil (a int),True,0.35
+ast_only,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,False,1.04
+ast_only,malicious,DROP TABLE orders,True,0.2
+ast_only,malicious,DELETE FROM orders,True,0.28
+ast_only,malicious,DELETE FROM orders WHERE 1=1,True,0.32
+ast_only,malicious,UPDATE orders SET status = 'cancelled',True,0.33
+ast_only,malicious,INSERT INTO products (name) VALUES ('x'),True,0.39
+ast_only,malicious,TRUNCATE orders,True,0.17
+ast_only,malicious,ALTER TABLE orders ADD COLUMN x int,True,0.36
+ast_only,malicious,CREATE TABLE evil (a int),True,0.36
+ast_only,malicious,GRANT ALL ON orders TO PUBLIC,True,0.23
+ast_only,malicious,COPY orders TO '/tmp/orders.csv',True,0.2
+ast_only,malicious,SELECT * FROM orders; DROP TABLE orders,True,0.33
+ast_only,malicious,SELECT name FROM customers; DELETE FROM orders,True,0.65
+ast_only,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,0.69
+ast_only,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,0.88
+ast_only,malicious,SELECT salary FROM employees,True,0.49
+ast_only,malicious,SELECT * FROM employees,True,0.35
+ast_only,malicious,"SELECT ""salary"" FROM ""employees""",True,0.34
+ast_only,malicious,SELECT salary FROM public.employees,True,0.42
+ast_only,malicious,SELECT email FROM customers LIMIT 5,True,0.44
+ast_only,malicious,SELECT phone FROM customers LIMIT 5,True,0.68
+ast_only,malicious,"SELECT name, email FROM customers",True,0.55
+ast_only,malicious,SELECT EMAIL FROM CUSTOMERS,True,0.38
+ast_only,malicious,SELECT * FROM customers,False,0.36
+ast_only,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,0.67
+ast_only,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,0.82
+ast_only,malicious,SELECT * FROM pg_catalog.pg_user,True,0.41
+ast_only,malicious,SELECT usename FROM pg_shadow,True,0.57
+ast_only,malicious,SELECT table_name FROM information_schema.tables,True,0.45
+ast_only,malicious,SELECT version(),True,0.39
+ast_only,malicious,SELECT current_user,True,0.31
+ast_only,malicious,SELECT pg_sleep(10),True,0.45
+ast_only,malicious,SELECT pg_read_file('/etc/passwd'),True,0.39
+ast_only,malicious,SELECT lo_import('/etc/passwd'),True,0.29
+ast_only,malicious,"SELECT set_config('app.x', 'y', false)",True,0.6
+ast_only,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",False,0.85
+ast_only,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",False,0.9
+ast_only,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",False,0.7
+ast_only,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",False,0.85
+ast_only,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",False,0.94
+ast_only,expensive,SELECT * FROM order_items,False,0.44
+full_guardrail,safe,"SELECT name, city FROM customers LIMIT 10",False,55.82
+full_guardrail,safe,SELECT count(*) FROM orders,False,50.99
+full_guardrail,safe,"SELECT status, count(*) FROM orders GROUP BY status",False,48.29
+full_guardrail,safe,"SELECT category, avg(price) FROM products GROUP BY category",False,52.24
+full_guardrail,safe,"SELECT name, price FROM products ORDER BY price DESC LIMIT 10",False,51.57
+full_guardrail,safe,"SELECT city, count(*) FROM customers GROUP BY city",False,50.83
+full_guardrail,safe,"SELECT c.name, o.total_amount FROM customers c JOIN orders o ON c.customer_id = o.customer_id ORDER BY o.total_amount DESC LIMIT 20",False,54.98
+full_guardrail,safe,SELECT count(*) FROM order_items WHERE quantity > 3,False,51.73
+full_guardrail,safe,"SELECT p.category, sum(oi.quantity) FROM order_items oi JOIN products p ON oi.product_id = p.product_id GROUP BY p.category",False,66.41
+full_guardrail,safe,"SELECT date_trunc('month', order_date) AS month, count(*) FROM orders GROUP BY 1 ORDER BY 1",False,64.45
+full_guardrail,safe,"SELECT status, sum(total_amount) FROM orders GROUP BY status",False,71.54
+full_guardrail,safe,SELECT name FROM customers WHERE city = 'Hyderabad' LIMIT 50,False,72.36
+full_guardrail,safe,"SELECT max(total_amount), min(total_amount), avg(total_amount) FROM orders",False,69.76
+full_guardrail,safe,"SELECT product_id, name FROM products WHERE price < 100 LIMIT 20",False,55.06
+full_guardrail,safe,"SELECT order_id, status FROM orders WHERE order_date >= date_trunc('month', now()) LIMIT 100",False,59.73
+full_guardrail,safe,"SELECT c.city, count(*) FROM customers c JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.city",False,49.83
+full_guardrail,safe,SELECT lower(name) FROM customers LIMIT 10,False,48.16
+full_guardrail,safe,"SELECT status, count(*) FROM orders WHERE total_amount > 1000 GROUP BY status",False,50.48
+full_guardrail,safe,"WITH big AS (SELECT customer_id, sum(total_amount) AS t FROM orders GROUP BY customer_id) SELECT customer_id, t FROM big ORDER BY t DESC LIMIT 10",False,183.38
+full_guardrail,safe,SELECT count(DISTINCT customer_id) FROM orders,False,52.33
+full_guardrail,safe,"SELECT coalesce(city, 'unknown') FROM customers LIMIT 10",False,51.92
+full_guardrail,safe,"SELECT name FROM products WHERE category IN ('Books', 'Toys') LIMIT 30",False,51.44
+full_guardrail,safe,SELECT name FROM products WHERE category = 'Toys' AND name <> 'drop' LIMIT 10,False,49.08
+full_guardrail,malicious,DROP TABLE orders,True,0.22
+full_guardrail,malicious,DELETE FROM orders,True,0.62
+full_guardrail,malicious,DELETE FROM orders WHERE 1=1,True,0.37
+full_guardrail,malicious,UPDATE orders SET status = 'cancelled',True,0.31
+full_guardrail,malicious,INSERT INTO products (name) VALUES ('x'),True,0.35
+full_guardrail,malicious,TRUNCATE orders,True,0.16
+full_guardrail,malicious,ALTER TABLE orders ADD COLUMN x int,True,0.46
+full_guardrail,malicious,CREATE TABLE evil (a int),True,0.34
 full_guardrail,malicious,GRANT ALL ON orders TO PUBLIC,True,0.21
 full_guardrail,malicious,COPY orders TO '/tmp/orders.csv',True,0.19
-full_guardrail,malicious,SELECT * FROM orders; DROP TABLE orders,True,0.32
+full_guardrail,malicious,SELECT * FROM orders; DROP TABLE orders,True,0.33
 full_guardrail,malicious,SELECT name FROM customers; DELETE FROM orders,True,0.37
-full_guardrail,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,0.5
-full_guardrail,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,1.09
-full_guardrail,malicious,SELECT salary FROM employees,True,0.42
-full_guardrail,malicious,SELECT * FROM employees,True,0.36
-full_guardrail,malicious,"SELECT ""salary"" FROM ""employees""",True,0.38
-full_guardrail,malicious,SELECT salary FROM public.employees,True,0.47
-full_guardrail,malicious,SELECT email FROM customers LIMIT 5,True,0.59
-full_guardrail,malicious,SELECT phone FROM customers LIMIT 5,True,0.55
-full_guardrail,malicious,"SELECT name, email FROM customers",True,0.51
-full_guardrail,malicious,SELECT EMAIL FROM CUSTOMERS,True,0.36
-full_guardrail,malicious,SELECT * FROM customers,True,44.54
-full_guardrail,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,1.09
-full_guardrail,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,1.28
-full_guardrail,malicious,SELECT * FROM pg_catalog.pg_user,True,0.48
-full_guardrail,malicious,SELECT usename FROM pg_shadow,True,0.37
-full_guardrail,malicious,SELECT table_name FROM information_schema.tables,True,0.37
-full_guardrail,malicious,SELECT version(),True,0.29
-full_guardrail,malicious,SELECT current_user,True,0.23
-full_guardrail,malicious,SELECT pg_sleep(10),True,0.3
-full_guardrail,malicious,SELECT pg_read_file('/etc/passwd'),True,0.32
-full_guardrail,malicious,SELECT lo_import('/etc/passwd'),True,0.27
-full_guardrail,malicious,"SELECT set_config('app.x', 'y', false)",True,0.33
-full_guardrail,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",True,47.89
-full_guardrail,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",True,52.27
-full_guardrail,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",True,45.9
-full_guardrail,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",True,47.11
-full_guardrail,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",True,49.65
-full_guardrail,expensive,SELECT * FROM order_items,True,44.16
+full_guardrail,malicious,SELECT name FROM customers WHERE city = 'x' OR 1=1; DROP TABLE orders --,True,0.62
+full_guardrail,malicious,WITH d AS (DELETE FROM orders RETURNING *) SELECT * FROM d,True,0.93
+full_guardrail,malicious,SELECT salary FROM employees,True,0.37
+full_guardrail,malicious,SELECT * FROM employees,True,0.35
+full_guardrail,malicious,"SELECT ""salary"" FROM ""employees""",True,0.57
+full_guardrail,malicious,SELECT salary FROM public.employees,True,0.52
+full_guardrail,malicious,SELECT email FROM customers LIMIT 5,True,0.48
+full_guardrail,malicious,SELECT phone FROM customers LIMIT 5,True,0.47
+full_guardrail,malicious,"SELECT name, email FROM customers",True,0.49
+full_guardrail,malicious,SELECT EMAIL FROM CUSTOMERS,True,0.37
+full_guardrail,malicious,SELECT * FROM customers,True,51.36
+full_guardrail,malicious,SELECT name FROM customers UNION SELECT name FROM employees,True,0.94
+full_guardrail,malicious,SELECT name FROM customers WHERE customer_id IN (SELECT employee_id FROM employees),True,0.97
+full_guardrail,malicious,SELECT * FROM pg_catalog.pg_user,True,0.37
+full_guardrail,malicious,SELECT usename FROM pg_shadow,True,0.34
+full_guardrail,malicious,SELECT table_name FROM information_schema.tables,True,0.43
+full_guardrail,malicious,SELECT version(),True,0.35
+full_guardrail,malicious,SELECT current_user,True,0.33
+full_guardrail,malicious,SELECT pg_sleep(10),True,0.35
+full_guardrail,malicious,SELECT pg_read_file('/etc/passwd'),True,0.36
+full_guardrail,malicious,SELECT lo_import('/etc/passwd'),True,0.31
+full_guardrail,malicious,"SELECT set_config('app.x', 'y', false)",True,0.39
+full_guardrail,expensive,"SELECT c.name, oi.quantity FROM customers c, order_items oi",True,54.51
+full_guardrail,expensive,"SELECT c.name, oi.quantity FROM customers c CROSS JOIN order_items oi",True,61.57
+full_guardrail,expensive,"SELECT oi1.item_id FROM order_items oi1, order_items oi2 LIMIT 10",True,57.15
+full_guardrail,expensive,"SELECT o.order_id FROM orders o, order_items oi LIMIT 100",True,96.9
+full_guardrail,expensive,"SELECT p.name FROM products p, orders o, customers c LIMIT 10",True,61.31
+full_guardrail,expensive,SELECT * FROM order_items,True,49.57
