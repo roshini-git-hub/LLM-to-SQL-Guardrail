@@ -39,3 +39,9 @@ ALLOWED_FUNCTIONS |= {
 
 # Window functions
 ALLOWED_FUNCTIONS |= {"row_number", "rank", "dense_rank", "lag", "lead"}
+
+# --- Added after the final evaluation (not measured on the final set) ---
+ALLOWED_FUNCTIONS |= {
+    "nullif", "trim", "ltrim", "rtrim", "concat", "group_concat", "string_agg",
+    "substring", "replace", "greatest", "least", "floor", "ceil",
+}

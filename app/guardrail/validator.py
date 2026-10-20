@@ -80,5 +80,12 @@ def validate(sql: str) -> ValidationResult:
         if not has_agg:
             result.add("missing_limit", "warn", "No LIMIT on a non-aggregate query")
 
+    # 10. Recursive CTEs can run without end (policy: not allowed for this role)
+    for w in tree.find_all(exp.With):
+        if w.args.get("recursive"):
+            result.add("recursive_cte", "block", "Recursive queries are not allowed")
+            break
+
     return result
+
 

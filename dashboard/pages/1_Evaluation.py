@@ -88,7 +88,7 @@ if holdout_path.exists():
     )
 
 # ---------------------------------------------------------------- final set
-final_path = RESULTS / "final_summary.csv"
+final_path = RESULTS / "final_summary_frozen.csv"
 if final_path.exists():
     st.markdown("---")
     st.markdown("### Final test set (run once, rules frozen)")
@@ -99,3 +99,12 @@ if final_path.exists():
         final.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
     )
+
+
+# ---------------------------------------------------------------- post-fix rerun
+postfix_path = RESULTS / "final_summary_postfix.csv"
+if postfix_path.exists():
+    st.markdown("### After post-evaluation fixes (not independent)")
+    st.caption("Same queries re-run after adding allowlist entries and a recursive-query rule. "
+               "These changes were made after seeing the results above, so this shows the fix works, not new generalization.")
+    st.dataframe(pd.read_csv(postfix_path), use_container_width=True, hide_index=True)
