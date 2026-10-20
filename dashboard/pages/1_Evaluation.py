@@ -66,3 +66,23 @@ if holdout_path.exists():
         holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
     )
+
+# ---------------------------------------------------------------- held-out set
+holdout_path = RESULTS / "holdout_summary.csv"
+before_path = RESULTS / "holdout_before_fix.csv"
+if holdout_path.exists():
+    st.markdown("---")
+    st.markdown("### Held-out test set")
+    st.caption("Queries written after the rules were designed, including evasion attempts.")
+
+    if before_path.exists():
+        st.markdown("**Before tuning** (first run on unseen queries)")
+        st.dataframe(pd.read_csv(before_path), use_container_width=True, hide_index=True)
+        st.markdown("**After tuning** (the held-out set has now been used for fixes)")
+
+    holdout = pd.read_csv(holdout_path)
+    st.dataframe(holdout, use_container_width=True, hide_index=True)
+    st.bar_chart(
+        holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
+        stack=False,
+    )
