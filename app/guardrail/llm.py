@@ -94,3 +94,39 @@ def repair_sql(question: str, bad_sql: str, reasons: list) -> str:
         "Write a corrected query that answers the same question and fixes the problems. "
         "Output only the SQL."
     )
+
+
+# ---- Value hints: exact spellings of categorical values (schema linking) ----
+_HINT_COLUMNS = [("orders", "status"), ("products", "category"), ("customers", "city")]
+
+
+def _value_hints() -> str:
+    from app.guardrail.db import get_connection
+
+    lines = []
+    conn = get_connection()
+    try:
+        cur = conn.cursor()
+        for table, col in _HINT_COLUMNS:
+            cur.execute(
+                f"SELECT DISTINCT {col} FROM {table} WHERE {col} IS NOT NULL ORDER BY 1 LIMIT 21"
+            )
+            values = [r[0] for r in cur.fetchall()]
+            if 0 < len(values) <= 20:
+                lines.append(f"- {table}.{col}: " + ", ".join(repr(v) for v in values))
+    finally:
+        conn.rollback()
+        conn.close()
+    if not lines:
+        return ""
+    return (
+        "\nExact values stored in the data (copy these spellings exactly, they are case-sensitive):\n"
+        + "\n".join(lines)
+        + "\n"
+    )
+
+
+try:
+    SYSTEM_PROMPT += _value_hints()
+except Exception:
+    pass  # run without hints if the database is unreachable

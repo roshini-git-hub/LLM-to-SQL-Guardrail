@@ -42,3 +42,11 @@ st.dataframe(g[~g.correct][["question", "decision", "repairs", "final_sql"]],
 u = per_q[(per_q["mode"] == mode) & (per_q.kind == "unsafe")]
 st.markdown("**Unsafe requests**")
 st.dataframe(u[["question", "decision", "executed"]], use_container_width=True, hide_index=True)
+
+# ---------------------------------------------------------------- before value hints
+before_path = RESULTS / "nl_summary_before_hints.csv"
+if before_path.exists():
+    st.markdown("---")
+    st.markdown("### Before adding value hints to the prompt")
+    st.caption("First run of the benchmark; the table above is the run after the change.")
+    st.dataframe(pd.read_csv(before_path), use_container_width=True, hide_index=True)
