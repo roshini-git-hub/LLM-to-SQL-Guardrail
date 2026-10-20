@@ -86,3 +86,16 @@ if holdout_path.exists():
         holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
     )
+
+# ---------------------------------------------------------------- final set
+final_path = RESULTS / "final_summary.csv"
+if final_path.exists():
+    st.markdown("---")
+    st.markdown("### Final test set (run once, rules frozen)")
+    st.caption("Queries written last, using attack styles not tested before. No tuning followed this run.")
+    final = pd.read_csv(final_path)
+    st.dataframe(final, use_container_width=True, hide_index=True)
+    st.bar_chart(
+        final.set_index("baseline")[["detection_rate", "false_positive_rate"]],
+        stack=False,
+    )
