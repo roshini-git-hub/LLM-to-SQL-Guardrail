@@ -2,8 +2,14 @@ import sqlglot
 from sqlglot import exp
 from sqlglot.errors import ParseError
 
-from app.guardrail.models import ValidationResult
 from app.guardrail import policy
+from app.guardrail.models import ValidationResult
+
+# SQL syntax that SQLGlot represents as "functions" but that is not a function call
+SYNTAX_NODES = (
+    exp.Column, exp.Table, exp.Connector,
+    exp.Case, exp.If, exp.Cast, exp.TryCast,
+)
 
 
 def validate(sql: str) -> ValidationResult:
@@ -32,19 +38,27 @@ def validate(sql: str) -> ValidationResult:
                    f"Only SELECT is allowed, got {type(tree).__name__}")
         return result
 
-    # 4. Look for write or DDL nodes hidden inside (e.g. CTEs)
+    # 4. Write or DDL nodes hidden inside (e.g. in CTEs)
     for node_type in (exp.Insert, exp.Update, exp.Delete, exp.Drop,
                       exp.Create, exp.Alter, exp.Command):
         if tree.find(node_type):
             result.add("hidden_write", "block",
                        f"Found {node_type.__name__} inside the query")
 
+    # 4b. Row locking and SELECT INTO are not read-only operations
+    if tree.find(exp.Lock):
+        result.add("row_locking", "block", "FOR UPDATE / FOR SHARE is not allowed")
+    if tree.find(exp.Into):
+        result.add("select_into", "block", "SELECT INTO is not allowed")
+
     # 5. Tables
     cte_names = {c.alias_or_name.lower() for c in tree.find_all(exp.CTE)}
+    used_tables = set()
     for table in tree.find_all(exp.Table):
         name = table.name.lower()
         if name in cte_names:
             continue
+        used_tables.add(name)
         if name in policy.BLOCKED_TABLES:
             result.add("blocked_table", "block", f"Table '{name}' is not allowed")
         elif name not in policy.ALLOWED_SCHEMA:
@@ -56,28 +70,31 @@ def validate(sql: str) -> ValidationResult:
         if cname in policy.SENSITIVE_COLUMNS:
             result.add("sensitive_column", "block", f"Column '{cname}' is restricted")
 
-    # 7. SELECT * is flagged because it would expose restricted columns
-    if tree.find(exp.Star):
-        in_count = any(isinstance(s.parent, exp.Count) for s in tree.find_all(exp.Star))
-        if not in_count:
-            result.add("select_star", "warn", "SELECT * may expose restricted columns")
+    # 7. Star expansion: * on a table with hidden columns would expose them
+    stars = [s for s in tree.find_all(exp.Star) if not isinstance(s.parent, exp.Count)]
+    if stars:
+        restricted = used_tables & policy.TABLES_WITH_HIDDEN_COLUMNS
+        if restricted:
+            result.add("star_on_restricted_table", "block",
+                       f"SELECT * would expose restricted columns of: {', '.join(sorted(restricted))}")
+        else:
+            result.add("select_star", "warn", "SELECT * returns every column")
 
     # 8. Functions: only allowlisted ones
     for func in tree.find_all(exp.Func):
-        if isinstance(func, (exp.Column, exp.Table, exp.Connector, exp.Case, exp.If, exp.Cast, exp.TryCast)):
+        if isinstance(func, SYNTAX_NODES):
             continue
         fname = func.sql_name().lower()
-        builtin_ok = fname in policy.ALLOWED_FUNCTIONS
-        if not builtin_ok and isinstance(func, exp.Anonymous):
+        ok = fname in policy.ALLOWED_FUNCTIONS
+        if not ok and isinstance(func, exp.Anonymous):
             fname = func.name.lower()
-            builtin_ok = fname in policy.ALLOWED_FUNCTIONS
-        if not builtin_ok:
+            ok = fname in policy.ALLOWED_FUNCTIONS
+        if not ok:
             result.add("forbidden_function", "block", f"Function '{fname}' is not allowed")
 
     # 9. Missing LIMIT
     if isinstance(tree, exp.Select) and not tree.args.get("limit"):
-        has_agg = tree.find(exp.AggFunc) is not None
-        if not has_agg:
+        if tree.find(exp.AggFunc) is None:
             result.add("missing_limit", "warn", "No LIMIT on a non-aggregate query")
 
     # 10. Recursive CTEs can run without end (policy: not allowed for this role)
@@ -87,5 +104,3 @@ def validate(sql: str) -> ValidationResult:
             break
 
     return result
-
-
