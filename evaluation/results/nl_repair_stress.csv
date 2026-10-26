@@ -1,0 +1,59 @@
+question,first_sql,first_decision,first_reasons,final_sql,final_decision,repairs,correct_first,correct_final
+How many customers are there?,SELECT count(*) FROM customers,ALLOW,,SELECT count(*) FROM customers,ALLOW,0,True,True
+How many orders are there for each status?,"SELECT status, count(*) FROM orders GROUP BY status",ALLOW,Large sequential scan on 'orders' (~117647 rows),"SELECT status, count(*) FROM orders GROUP BY status",ALLOW,0,True,True
+What is the average product price in each category?,SELECT AVG(price) FROM products GROUP BY category;,ALLOW,,SELECT AVG(price) FROM products GROUP BY category;,ALLOW,0,False,False
+How many customers live in each city?,"SELECT city, count(customer_id) FROM customers GROUP BY city",ALLOW,,"SELECT city, count(customer_id) FROM customers GROUP BY city",ALLOW,0,True,True
+What is the total revenue from delivered orders?,SELECT SUM(oi.quantity * oi.unit_price) FROM order_items oi JOIN orders o ON oi.order_id = o.order_id WHERE o.status = 'Delivered',ALLOW,Large sequential scan on 'order_items' (~250000 rows),SELECT SUM(oi.quantity * oi.unit_price) FROM order_items oi JOIN orders o ON oi.order_id = o.order_id WHERE o.status = 'Delivered',ALLOW,0,False,False
+List the 5 most expensive products with their prices.,"SELECT product_name, price FROM products ORDER BY price DESC LIMIT 5;",BLOCK,"Planner rejected the query: column ""product_name"" does not exist","SELECT name, price FROM products ORDER BY price DESC LIMIT 5",ALLOW,1,False,True
+How many orders were placed by customers in Hyderabad?,SELECT COUNT(T1.order_id) FROM orders AS T1 INNER JOIN customers AS T2 ON T1.customer_id = T2.customer_id WHERE T2.city = 'Hyderabad',ALLOW,Large sequential scan on 'orders' (~117647 rows),SELECT COUNT(T1.order_id) FROM orders AS T1 INNER JOIN customers AS T2 ON T1.customer_id = T2.customer_id WHERE T2.city = 'Hyderabad',ALLOW,0,True,True
+What is the total quantity sold for each product category?,"SELECT
+    p.category,
+    SUM(oi.quantity) AS total_quantity_sold
+FROM
+    order_items oi
+JOIN
+    products p ON oi.product_id = p.product_id
+GROUP BY
+    p.category;",ALLOW,Large sequential scan on 'order_items' (~250000 rows),"SELECT
+    p.category,
+    SUM(oi.quantity) AS total_quantity_sold
+FROM
+    order_items oi
+JOIN
+    products p ON oi.product_id = p.product_id
+GROUP BY
+    p.category;",ALLOW,0,True,True
+How many products are in the Electronics category?,SELECT count(*) FROM products WHERE category = 'Electronics';,ALLOW,,SELECT count(*) FROM products WHERE category = 'Electronics';,ALLOW,0,True,True
+What is the highest order total?,"SELECT MAX(order_total) FROM (SELECT o.order_id, SUM(oi.quantity * oi.price) AS order_total FROM orders o JOIN order_items oi ON o.order_id = oi.order_id GROUP BY o.order_id) AS order_totals",BLOCK,Planner rejected the query: column oi.price does not exist,SELECT MAX(total_amount) FROM orders,ALLOW,1,False,True
+How many orders were cancelled?,SELECT count(*) FROM orders WHERE status = 'Cancelled',ALLOW,,SELECT count(*) FROM orders WHERE status = 'Cancelled',ALLOW,0,False,False
+Which 3 customers have spent the most in total? Show their names and total spent.,"SELECT
+  c.customer_name,
+  SUM(oi.quantity * oi.price) AS total_spent
+FROM customers AS c
+JOIN orders AS o
+  ON c.customer_id = o.customer_id
+JOIN order_items AS oi
+  ON o.order_id = oi.order_id
+GROUP BY
+  c.customer_name
+ORDER BY
+  total_spent DESC
+LIMIT 3;",BLOCK,Planner rejected the query: column c.customer_name does not exist,"SELECT
+  c.name,
+  SUM(o.total_amount) AS total_spent
+FROM customers AS c
+JOIN orders AS o
+  ON c.customer_id = o.customer_id
+GROUP BY
+  c.name
+ORDER BY
+  total_spent DESC
+LIMIT 3",ALLOW,1,False,True
+How many distinct customers have placed at least one order?,SELECT count(distinct customer_id) FROM orders,ALLOW,"Moderate estimated cost (24,920) | Large sequential scan on 'orders' (~200000 rows)",SELECT count(distinct customer_id) FROM orders,ALLOW,0,True,True
+What is the average order total for each status?,"SELECT status, AVG(total) FROM orders GROUP BY status;",BLOCK,"Planner rejected the query: column ""total"" does not exist","SELECT status, AVG(total_amount) FROM orders GROUP BY status",ALLOW,1,False,True
+How many order items have a quantity greater than 3?,SELECT count(*) FROM order_items WHERE quantity > 3;,ALLOW,Large sequential scan on 'order_items' (~100383 rows),SELECT count(*) FROM order_items WHERE quantity > 3;,ALLOW,0,True,True
+How many orders were placed in each year?,"SELECT EXTRACT(YEAR FROM order_date) AS order_year, COUNT(order_id) AS number_of_orders FROM orders GROUP BY order_year;",ALLOW,"Moderate estimated cost (27,198) | Large sequential scan on 'orders' (~200000 rows)","SELECT EXTRACT(YEAR FROM order_date) AS order_year, COUNT(order_id) AS number_of_orders FROM orders GROUP BY order_year;",ALLOW,0,True,True
+What is the lowest product price in each category?,"SELECT category, MIN(price) FROM products GROUP BY category;",ALLOW,,"SELECT category, MIN(price) FROM products GROUP BY category;",ALLOW,0,True,True
+How many products cost more than 500?,SELECT count(*) FROM products WHERE price > 500;,ALLOW,,SELECT count(*) FROM products WHERE price > 500;,ALLOW,0,True,True
+What is the total number of units sold across all orders?,SELECT SUM(oi.quantity) FROM order_items oi;,ALLOW,Large sequential scan on 'order_items' (~250000 rows),SELECT SUM(oi.quantity) FROM order_items oi;,ALLOW,0,True,True
+What is the average quantity per order item?,SELECT AVG(quantity) FROM order_items;,ALLOW,Large sequential scan on 'order_items' (~250000 rows),SELECT AVG(quantity) FROM order_items;,ALLOW,0,True,True

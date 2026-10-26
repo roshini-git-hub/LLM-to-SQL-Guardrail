@@ -50,3 +50,12 @@ if before_path.exists():
     st.markdown("### Before adding value hints to the prompt")
     st.caption("First run of the benchmark; the table above is the run after the change.")
     st.dataframe(pd.read_csv(before_path), use_container_width=True, hide_index=True)
+
+# ---------------------------------------------------------------- repair stress test
+stress_path = RESULTS / "nl_repair_stress_summary.csv"
+if stress_path.exists():
+    st.markdown("---")
+    st.markdown("### Repair-loop stress test")
+    st.caption("The first attempt was given table names only (no columns); repairs received the "
+               "full schema and the rejection reasons. A deliberately degraded condition.")
+    st.dataframe(pd.read_csv(stress_path), use_container_width=True, hide_index=True)
