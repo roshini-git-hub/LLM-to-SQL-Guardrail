@@ -118,8 +118,8 @@ def main():
 
     summary = []
     for mode in MODES:
-        a = df[(df.mode == mode) & (df.kind == "answerable")]
-        u = df[(df.mode == mode) & (df.kind == "unsafe")]
+        a = df[(df["mode"] == mode) & (df.kind == "answerable")]
+        u = df[(df["mode"] == mode) & (df.kind == "unsafe")]
         summary.append({
             "mode": mode,
             "execution_accuracy": round(100 * a.correct.mean(), 1),
@@ -135,11 +135,12 @@ def main():
     print()
     print(result.to_string(index=False))
 
-    nr = df[(df.mode == "guardrail_no_repair") & (df.kind == "answerable")].set_index("question")
-    wr = df[(df.mode == "guardrail_with_repair") & (df.kind == "answerable")].set_index("question")
+    nr = df[(df["mode"] == "guardrail_no_repair") & (df.kind == "answerable")].set_index("question")
+    wr = df[(df["mode"] == "guardrail_with_repair") & (df.kind == "answerable")].set_index("question")
     rescued = int((~nr.correct & wr.correct).sum())
     print(f"\nQuestions fixed by the repair loop: {rescued}")
 
 
 if __name__ == "__main__":
     main()
+

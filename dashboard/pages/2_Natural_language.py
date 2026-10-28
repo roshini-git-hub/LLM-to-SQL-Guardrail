@@ -59,3 +59,18 @@ if stress_path.exists():
     st.caption("The first attempt was given table names only (no columns); repairs received the "
                "full schema and the rejection reasons. A deliberately degraded condition.")
     st.dataframe(pd.read_csv(stress_path), use_container_width=True, hide_index=True)
+
+# ---------------------------------------------------------------- repair stress test
+stress_path = RESULTS / "nl_repair_stress_summary.csv"
+if stress_path.exists():
+    st.markdown("---")
+    st.markdown("### Repair-loop stress test")
+    st.caption("The first attempt was given table names only (no columns); repairs received the "
+               "full schema and the rejection reasons. A deliberately degraded condition.")
+    st.dataframe(pd.read_csv(stress_path), use_container_width=True, hide_index=True)
+    detail_path = RESULTS / "nl_repair_stress.csv"
+    if detail_path.exists():
+        detail = pd.read_csv(detail_path)
+        fixed = detail[detail["repairs"] > 0][["question", "first_sql", "first_reasons", "final_sql"]]
+        st.markdown("**Queries the repair loop corrected**")
+        st.dataframe(fixed, use_container_width=True, hide_index=True)

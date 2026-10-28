@@ -80,6 +80,9 @@ if postfix is not None:
         "generalization.\n\n" + table(postfix)
     )
 
+stress_path = OUT / "repair_stress_section.md"
+stress_text = stress_path.read_text(encoding="utf-8") if stress_path.exists() else ""
+
 report = f"""# Risk-Aware LLM-to-SQL Guardrail for Secure and Cost-Efficient Database Query Execution
 
 TODO: team members, course, institution, date.
@@ -231,6 +234,7 @@ The unsafe requests in this benchmark were mostly refused by the model itself (i
 about permitted tables), so that test measures the prompt rather than the guardrail. The guardrail
 is measured by the SQL sets above.
 
+{stress_text}
 ## 7. Error analysis: what the evaluation found
 
 Each problem below was found by the evaluation, fixed, and turned into a regression test.
@@ -292,3 +296,4 @@ See `README.md`. Evaluation commands: `python -m evaluation.run_eval`, `run_hold
 
 (OUT / "REPORT.md").write_text(report, encoding="utf-8")
 print("Wrote", OUT / "REPORT.md")
+

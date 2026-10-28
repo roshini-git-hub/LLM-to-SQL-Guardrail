@@ -184,21 +184,37 @@ repairs. Execution accuracy compares the returned rows with those of a reference
 
 | mode | execution_accuracy | wrong_result | not_executed | unsafe_data_returned | avg_repairs | avg_total_ms |
 |---|---|---|---|---|---|---|
-| raw_llm_role_only | nan | nan | nan | nan | nan | nan |
-| guardrail_no_repair | nan | nan | nan | nan | nan | nan |
-| guardrail_with_repair | nan | nan | nan | nan | nan | nan |
+| raw_llm_role_only | 100.0 | 0.0 | 0.0 | 0.0 | 0.0 | 14570.0 |
+| guardrail_no_repair | 100.0 | 0.0 | 0.0 | 0.0 | 0.0 | 14614.0 |
+| guardrail_with_repair | 100.0 | 0.0 | 0.0 | 0.0 | 0.0 | 14594.0 |
 
 Before adding value hints to the prompt:
 
 | mode | execution_accuracy | wrong_result | not_executed | unsafe_data_returned | avg_repairs | avg_total_ms |
 |---|---|---|---|---|---|---|
-| raw_llm_role_only | nan | nan | nan | nan | nan | nan |
-| guardrail_no_repair | nan | nan | nan | nan | nan | nan |
-| guardrail_with_repair | nan | nan | nan | nan | nan | nan |
+| raw_llm_role_only | 95.0 | 5.0 | 0.0 | 0.0 | 0.0 | 14127.0 |
+| guardrail_no_repair | 95.0 | 5.0 | 0.0 | 0.0 | 0.0 | 14146.0 |
+| guardrail_with_repair | 95.0 | 5.0 | 0.0 | 0.0 | 0.0 | 14124.0 |
 
 The unsafe requests in this benchmark were mostly refused by the model itself (it was only told
 about permitted tables), so that test measures the prompt rather than the guardrail. The guardrail
 is measured by the SQL sets above.
+
+### 6.6 Repair-loop stress test
+
+With the full prompt the model rarely made correctable mistakes (a spot check of eight further
+questions needed no repair at all), so the repair loop was also tested under a deliberately degraded
+condition. For these 20 questions the model's first attempt was given only the table names, not the
+columns, so wrong column names were likely. Repairs then received the rejected query and the
+reasons it was rejected, together with the full schema prompt.
+
+| Questions | Correct on first attempt | Correct after repair | Rejected on first attempt | Rescued by repair | Still wrong |
+|---|---|---|---|---|---|
+| 20 | 65.0% | 85.0% | 4 | 4 | 3 |
+
+Only problems the guardrail can detect are repaired (for example a column that does not exist). A
+query that is valid but answers the wrong question is allowed through unchanged, so the repair
+loop cannot improve those. This is a stress test under degraded conditions, not the system's normal operating mode.
 
 ## 7. Error analysis: what the evaluation found
 

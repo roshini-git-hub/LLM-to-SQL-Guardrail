@@ -130,3 +130,20 @@ try:
     SYSTEM_PROMPT += _value_hints()
 except Exception:
     pass  # run without hints if the database is unreachable
+
+
+# ---- Retry wrapper: Ollama can fail to load the model temporarily ----
+import time as _time
+
+_raw_call = _call
+
+
+def _call(user_message: str) -> str:
+    last_error = None
+    for attempt in range(4):
+        try:
+            return _raw_call(user_message)
+        except Exception as e:
+            last_error = e
+            _time.sleep(5 * (attempt + 1))
+    raise last_error
