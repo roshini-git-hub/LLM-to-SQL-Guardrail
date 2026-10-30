@@ -39,7 +39,7 @@ the LLM for repair. Only fixable problems (syntax, unknown columns, high cost, m
 ## Run
 
 - API: `uvicorn app.main:app --reload`
-- Dashboard: `streamlit run dashboard\app.py`
+- Dashboard: `streamlit run dashboard\Home.py`
 
 ## Evaluate
 
@@ -56,3 +56,4 @@ the LLM for repair. Only fixable problems (syntax, unknown columns, high cost, m
 - `dashboard/`: Streamlit dashboard (dark theme)
 - `evaluation/`: datasets, baselines and evaluation runners
 - `tests/`: unit and regression tests
+

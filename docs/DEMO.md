@@ -1,6 +1,6 @@
 # Demo script (about 5 minutes)
 
-Before starting: Ollama running, `uvicorn app.main:app` running, `streamlit run dashboard\app.py` open.
+Before starting: Ollama running, `uvicorn app.main:app` running, `streamlit run dashboard\Home.py` open.
 
 1. The problem (30 s)
    An LLM writes SQL. It can be wrong, unauthorized or expensive. The database role alone
@@ -36,3 +36,4 @@ Before starting: Ollama running, `uvicorn app.main:app` running, `streamlit run 
 
 8. Audit log (15 s) - page "Audit log"
    Everything just shown has been recorded.
+
