@@ -1,6 +1,6 @@
 # Risk-Aware LLM-to-SQL Guardrail for Secure and Cost-Efficient Database Query Execution
 
-TODO: team members, course, institution, date.
+TODO: Roshini, Navya, Shreya , DBMS.
 
 ## Abstract
 
@@ -35,10 +35,7 @@ examines each query before it runs.
 
 ## 2. Related approaches
 
-TODO: add citations. Suggested topics: (a) text-to-SQL systems and benchmarks (for example
-Spider and BIRD), (b) SQL injection detection and prevention, (c) database access control
-(role-based access, column privileges, row-level security), (d) query optimizer cost models,
-(e) keyword blacklists as a common but weak defense.
+Text-to-SQL research has produced large benchmarks such as Spider [1] and BIRD [2] that measure whether generated SQL returns the correct result; they do not evaluate protection against malicious or unauthorized queries. SQL injection has a long literature, including a widely cited classification of attack types and countermeasures [3], and is documented by OWASP [4]. In the database itself, access control is provided by roles and column privileges and, in PostgreSQL, by row-level security [5], and the planner's EXPLAIN output gives cost estimates for a query before it runs [6]. Keyword blacklists are a common but weak defense, as the evaluation in this report shows. This project combines these existing mechanisms into one pipeline and measures what each layer contributes.
 
 ## 3. System design
 
@@ -65,8 +62,27 @@ The architecture diagram is in `README.md`. A query passes through these layers 
 ## 4. Implementation
 
 Python 3.12, PostgreSQL 16, SQLGlot, FastAPI, Streamlit (dark theme), and a local model served
-by Ollama (temperature 0 for repeatability). TODO: state the model name and size you used and the
-hardware. The test database has customers, products, orders (200,000 rows), order items
+by Ollama (temperature 0 for repeatability). 
+**Language model.** The LLM was `gemma4:e4b`, served locally by Ollama: architecture gemma4, 8.0 billion
+parameters, Q4_K_M quantization, 131,072-token context window, Apache 2.0 licence. The model's default
+sampling temperature is 1; every request in this project overrides it to 0 so that results are repeatable.
+
+**Test machine.** All experiments ran on one laptop: Intel Core i7-13620H CPU, 16 GB RAM, integrated Intel
+UHD Graphics (no dedicated GPU), Windows 11 Home Single Language. Because there was no dedicated GPU, model
+inference most likely ran on the CPU. TODO: confirm with `ollama ps` (see below). The time per question
+reported in Section 6.5 reflects this hardware and would differ on a faster machine.
+
+**Software versions.**
+
+| Component | Version |
+|---|---|
+| Python | 3.12.10 |
+| PostgreSQL | 16.15 |
+| SQLGlot | 30.23.0 |
+| FastAPI | 0.146.0 |
+| Streamlit | 1.66.0 |
+| Ollama Python client | 0.6.3 |
+| Ollama server | TODO: run `ollama --version` | The test database has customers, products, orders (200,000 rows), order items
 (600,000 rows) and an employees table that the role must never read. The restricted role is also
 denied the email and phone columns of customers.
 
@@ -80,8 +96,7 @@ denied the email and phone columns of customers.
 | Held-out | written after the rules; evasion attempts | 51 | 20 | 25 | 6 |
 | Final | written last; run once with rules frozen (git tag `final-eval-frozen`) | 57 | 21 | 30 | 6 |
 
-TODO: state how the queries were written and what tools or assistance were used, according to
-your course's rules.
+**Authorship.** The three labeled query sets and the natural-language benchmark questions were drafted by an AI assistant (Claude, from Anthropic) while the system was being designed, in the order described above, and the team ran them on its own machine. The assistant also wrote the first versions of the source code, the evaluation scripts and the draft of this report (see "Use of AI assistance" at the end). Because the same assistant helped design the rules and write the tests, the sets may share blind spots with the rules; this is listed as a limitation.
 
 **Approaches compared.** (1) no guardrail (reference, detects nothing by definition),
 (2) a regex keyword blacklist, (3) the restricted database role alone, (4) AST validation and
@@ -174,7 +189,7 @@ columns (two queries) and `SELECT ... FOR UPDATE`. The guardrail's own rules did
 the database role did. The two expensive queries caught by the AST layer were most likely blocked
 incidentally because `generate_series` was not on the function allowlist, so only the three
 caught by cost analysis count as genuine cost detection. The one missed expensive query was an
-unbounded recursive query. TODO: add your measurement from Step 67 (how it behaved at execution).
+unbounded recursive query. This query was tested directly, wrapped in an outer LIMIT 1000 as the engine wrapped allowed queries, and run as the restricted role. The form that selects rows returned its 1,000 rows in under a tenth of a second, because PostgreSQL evaluates recursive queries lazily and the LIMIT stopped it. The form that counts rows ran until the 5-second statement timeout and was cancelled after 5.07 s. So the frozen guardrail did not detect the query beforehand; it was bounded only by the execution timeout, and only the row-selecting form was bounded by the row limit. A rule blocking recursive queries was added after the final evaluation (the current decision for this query is BLOCK), so that change is not measured on an independent set.
 
 ### 6.5 Natural-language benchmark
 
@@ -299,6 +314,11 @@ Items 5 to 7 were fixed after the final evaluation and are therefore not measure
   narrow filter); this is not addressed.
 - The benchmark's model refusals reflect the prompt, not the guardrail.
 - Only one local model was tried and its SQL quality limits query correctness.
+- The query sets were drafted by the same AI assistant that helped design the rules, so they may share blind spots with the rules; sets written independently, for example from real query logs or by people who did not see the rules, would be a stronger test.
+- Timing results (model latency in particular) were measured on one laptop CPU with 16 GB of RAM and no dedicated GPU, and only one 8.0-billion-parameter, 4-bit quantized model was tried, so SQL quality and speed may differ with other models and hardware.
+- Timing results (model latency in particular) were measured on one laptop CPU with 16 GB of RAM and no
+  dedicated GPU, and only one local model (8.0B parameters, 4-bit quantized) was tried, so SQL quality and
+  speed may differ with other models and hardware.
 
 ## 9. Future work
 
@@ -314,6 +334,23 @@ expensive queries that rule-based and permission-based approaches miss, at a cos
 24.6 ms per query. The evaluation also exposed real weaknesses, which were fixed
 and recorded. The result is a working prototype with measured behavior rather than a claim of
 perfect protection.
+
+## References
+
+1. T. Yu et al., "Spider: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and Text-to-SQL Task," Proceedings of EMNLP, 2018.
+2. J. Li et al., "Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs," NeurIPS Datasets and Benchmarks Track, 2023.
+3. W. G. J. Halfond, J. Viegas and A. Orso, "A Classification of SQL Injection Attacks and Countermeasures," Proceedings of the IEEE International Symposium on Secure Software Engineering, 2006.
+4. OWASP Foundation, "SQL Injection," OWASP documentation, https://owasp.org (page and access date to be confirmed).
+5. The PostgreSQL Global Development Group, PostgreSQL 16 Documentation: "Privileges" and "Row Security Policies."
+6. The PostgreSQL Global Development Group, PostgreSQL 16 Documentation: "EXPLAIN."
+7. SQLGlot documentation, https://github.com/tobymao/sqlglot.
+
+## Use of AI assistance
+
+An AI assistant (Claude, from Anthropic) was used throughout this project. It produced the first versions
+of the source code, the labeled query sets, the evaluation scripts, the dashboard and the draft of this
+report, and it explained the design choices. The team installed the software, ran every command and
+experiment on its own machine, and the results reported here come from running that code.
 
 ## Appendix: reproducing the results
 
