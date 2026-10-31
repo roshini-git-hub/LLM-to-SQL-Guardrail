@@ -1,6 +1,7 @@
 # Risk-Aware LLM-to-SQL Guardrail for Secure and Cost-Efficient Database Query Execution
 
-TODO: Roshini, Navya, Shreya , DBMS.
+**Team:** Roshini (124cs0048), Navya (124cs0001), Shreya (124cs0040)  
+**Subject:** Database Management Systems (DBMS)
 
 ## Abstract
 
@@ -64,12 +65,11 @@ The architecture diagram is in `README.md`. A query passes through these layers 
 Python 3.12, PostgreSQL 16, SQLGlot, FastAPI, Streamlit (dark theme), and a local model served
 by Ollama (temperature 0 for repeatability). 
 **Language model.** The LLM was `gemma4:e4b`, served locally by Ollama: architecture gemma4, 8.0 billion
-parameters, Q4_K_M quantization, 131,072-token context window, Apache 2.0 licence. The model's default
+parameters, Q4_K_M quantization, context window of up to 131,072 tokens (4,096 tokens were used in these experiments), Apache 2.0 licence. The model's default
 sampling temperature is 1; every request in this project overrides it to 0 so that results are repeatable.
 
 **Test machine.** All experiments ran on one laptop: Intel Core i7-13620H CPU, 16 GB RAM, integrated Intel
-UHD Graphics (no dedicated GPU), Windows 11 Home Single Language. Because there was no dedicated GPU, model
-inference most likely ran on the CPU. TODO: confirm with `ollama ps` (see below). The time per question
+UHD Graphics (no dedicated GPU), Windows 11 Home Single Language. Ollama reported that the model ran entirely on the CPU (100% CPU) and used 9.4 GB of memory. The time per question
 reported in Section 6.5 reflects this hardware and would differ on a faster machine.
 
 **Software versions.**
@@ -82,7 +82,9 @@ reported in Section 6.5 reflects this hardware and would differ on a faster mach
 | FastAPI | 0.146.0 |
 | Streamlit | 1.66.0 |
 | Ollama Python client | 0.6.3 |
-| Ollama server | TODO: run `ollama --version` | The test database has customers, products, orders (200,000 rows), order items
+| Ollama server | 0.40.3 |
+
+The test database has customers, products, orders (200,000 rows), order items
 (600,000 rows) and an employees table that the role must never read. The restricted role is also
 denied the email and phone columns of customers.
 

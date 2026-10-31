@@ -7,10 +7,10 @@ import streamlit as st
 
 from common import apply_style, load_log
 
-st.set_page_config(page_title="SQL Guardrail", page_icon="???", layout="wide")
+st.set_page_config(page_title="SQL Guardrail", page_icon="\U0001F6E1", layout="wide")
 apply_style()
 
-st.title("??? SQL Guardrail")
+st.title("\U0001F6E1\ufe0f SQL Guardrail")
 st.markdown("### A security guard for your database")
 st.write(
     "When you ask a question in plain English, an AI writes a database command (called SQL) "
@@ -38,15 +38,15 @@ st.markdown("#### The three possible answers")
 c1, c2, c3 = st.columns(3)
 c1.markdown(
     '<div class="verdict" style="border-color:#2EA043"><div class="vtitle" style="color:#2EA043">'
-    '? Safe to run</div><div class="vtext">No problems found. The query runs, with a time limit '
+    '\u2705 Safe to run</div><div class="vtext">No problems found. The query runs, with a time limit '
     'and a row limit.</div></div>', unsafe_allow_html=True)
 c2.markdown(
     '<div class="verdict" style="border-color:#D29922"><div class="vtitle" style="color:#D29922">'
-    '?? Needs a human check</div><div class="vtext">Something looked risky. It is held back '
+    '\u26a0\ufe0f Needs a human check</div><div class="vtext">Something looked risky. It is held back '
     'instead of running.</div></div>', unsafe_allow_html=True)
 c3.markdown(
     '<div class="verdict" style="border-color:#F85149"><div class="vtitle" style="color:#F85149">'
-    '? Blocked</div><div class="vtext">The query is stopped before it can touch the '
+    '\u26d4 Blocked</div><div class="vtext">The query is stopped before it can touch the '
     'database.</div></div>', unsafe_allow_html=True)
 
 log = load_log()

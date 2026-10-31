@@ -8,7 +8,7 @@ import streamlit as st
 
 from common import apply_style
 
-st.set_page_config(page_title="Natural language", page_icon="??", layout="wide")
+st.set_page_config(page_title="Natural language", page_icon="\U0001F4AC", layout="wide")
 apply_style()
 
 RESULTS = Path("evaluation") / "results"

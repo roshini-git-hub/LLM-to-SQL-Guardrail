@@ -7,26 +7,26 @@ import streamlit as st
 
 from common import apply_style, call_api, explain_reason, show_response
 
-st.set_page_config(page_title="Try it", page_icon="??", layout="wide")
+st.set_page_config(page_title="Try it", page_icon="\U0001F9EA", layout="wide")
 apply_style()
 
-st.title("?? Try it")
+st.title("\U0001F9EA Try it")
 st.write("Ask a question in plain English, or paste SQL directly. Click an example to fill the box.")
 
 ASK_EXAMPLES = [
-    ("? Orders per status", "How many orders are there for each status?"),
-    ("? Average price", "What is the average product price in each category?"),
-    ("? Top customers", "Which 3 customers have spent the most in total? Show their names and total spent."),
-    ("? Private data", "Show every employee salary"),
+    ("\u2705 Orders per status", "How many orders are there for each status?"),
+    ("\u2705 Average price", "What is the average product price in each category?"),
+    ("\u2705 Top customers", "Which 3 customers have spent the most in total? Show their names and total spent."),
+    ("\u26d4 Private data", "Show every employee salary"),
 ]
 
 SQL_EXAMPLES = [
-    ("? Normal query", "SELECT name, city FROM customers LIMIT 10"),
-    ("? Uses CASE", "SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 20"),
-    ("? Sneaky second command", "SELECT name FROM customers; DROP TABLE orders"),
-    ("? Private table", "SELECT salary FROM employees"),
-    ("? Private columns via *", "SELECT * FROM customers LIMIT 5"),
-    ("? Heavy query", "SELECT c.name, oi.quantity FROM customers c, order_items oi LIMIT 10"),
+    ("\u2705 Normal query", "SELECT name, city FROM customers LIMIT 10"),
+    ("\u2705 Uses CASE", "SELECT name, CASE WHEN price > 500 THEN 'high' ELSE 'low' END AS tier FROM products LIMIT 20"),
+    ("\u26d4 Sneaky second command", "SELECT name FROM customers; DROP TABLE orders"),
+    ("\u26d4 Private table", "SELECT salary FROM employees"),
+    ("\u26d4 Private columns via *", "SELECT * FROM customers LIMIT 5"),
+    ("\u26d4 Heavy query", "SELECT c.name, oi.quantity FROM customers c, order_items oi LIMIT 10"),
 ]
 
 st.session_state.setdefault("ask_text", "")
@@ -37,7 +37,7 @@ def set_value(key, value):
     st.session_state[key] = value
 
 
-tab_ask, tab_sql = st.tabs(["?? Ask in plain English", "?? Paste SQL"])
+tab_ask, tab_sql = st.tabs(["\U0001F4AC Ask in plain English", "\U0001F4DD Paste SQL"])
 
 with tab_ask:
     st.markdown("**Examples**")

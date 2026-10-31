@@ -12,9 +12,9 @@ LOG_PATH = Path("data") / "audit.jsonl"
 COLORS = {"ALLOW": "#2EA043", "REVIEW": "#D29922", "BLOCK": "#F85149"}
 
 VERDICTS = {
-    "ALLOW": ("Safe to run", "?", "No problems were found, so the query was allowed to run."),
-    "REVIEW": ("Needs a human check", "??", "Something looked risky, so the query was held back instead of running."),
-    "BLOCK": ("Blocked", "?", "The query was stopped before it could touch the database."),
+    "ALLOW": ("Safe to run", "\u2705", "No problems were found, so the query was allowed to run."),
+    "REVIEW": ("Needs a human check", "\u26a0\ufe0f", "Something looked risky, so the query was held back instead of running."),
+    "BLOCK": ("Blocked", "\u26d4", "The query was stopped before it could touch the database."),
 }
 
 FRIENDLY = {
@@ -166,7 +166,7 @@ def show_steps(resp: dict):
     if stages is None:
         return
     rules, cost, decision, run = stages
-    icons = {"ok": "?", "fail": "?", "warn": "??", "skip": "??"}
+    icons = {"ok": "\u2705", "fail": "\u274c", "warn": "\u26a0\ufe0f", "skip": "\u23ed\ufe0f"}
     words = {
         "rules": {"ok": "Passed", "fail": "Failed"},
         "cost": {"ok": "Light enough", "fail": "Could not be planned",

@@ -8,12 +8,12 @@ import streamlit as st
 
 from common import apply_style
 
-st.set_page_config(page_title="Results", page_icon="??", layout="wide")
+st.set_page_config(page_title="Results", page_icon="\U0001F4CA", layout="wide")
 apply_style()
 
 R = Path("evaluation") / "results"
 
-st.title("?? Results")
+st.title("\U0001F4CA Results")
 st.write(
     "How well does the guardrail work? We tested it against simpler kinds of protection on "
     "lists of queries that were labeled in advance as good, harmful or heavy."

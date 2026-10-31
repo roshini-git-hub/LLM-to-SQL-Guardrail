@@ -8,10 +8,10 @@ import streamlit as st
 
 from common import apply_style, load_log, show_verdict
 
-st.set_page_config(page_title="History", page_icon="??", layout="wide")
+st.set_page_config(page_title="History", page_icon="\U0001F4DC", layout="wide")
 apply_style()
 
-st.title("?? History")
+st.title("\U0001F4DC History")
 st.write("Every request the guardrail has checked, newest first.")
 
 df = load_log()
@@ -27,7 +27,7 @@ m2.metric("Safe to run", int((df["decision"] == "ALLOW").sum()))
 m3.metric("Needed a check", int((df["decision"] == "REVIEW").sum()))
 m4.metric("Blocked", int((df["decision"] == "BLOCK").sum()))
 
-LABELS = {"ALLOW": "? Safe", "REVIEW": "?? Review", "BLOCK": "? Blocked"}
+LABELS = {"ALLOW": "\u2705 Safe", "REVIEW": "\u26a0\ufe0f Review", "BLOCK": "\u26d4 Blocked"}
 
 choice = st.radio("Show", ["All", "Safe", "Review", "Blocked"], horizontal=True)
 wanted = {"All": ["ALLOW", "REVIEW", "BLOCK"], "Safe": ["ALLOW"],
