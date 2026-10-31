@@ -1,5 +1,5 @@
 validation,model,spearman,mae_log,median_q_error,p90_q_error,auc_slow
-random 5-fold (same query types),Planner cost (calibrated),0.945,0.378,1.31,2.75,1.0
-random 5-fold (same query types),Learned model,0.973,0.127,1.08,1.37,1.0
-unseen query types,Planner cost (calibrated),0.927,0.453,1.39,3.59,1.0
-unseen query types,Learned model,0.936,0.485,1.24,3.29,0.923
+random 5-fold (same query types),Planner cost (calibrated),0.952,0.39,1.27,3.02,1.0
+random 5-fold (same query types),Learned model,0.976,0.128,1.08,1.4,1.0
+unseen query types,Planner cost (calibrated),0.962,0.43,1.31,3.68,1.0
+unseen query types,Learned model,0.959,0.362,1.21,2.46,1.0

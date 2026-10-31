@@ -230,6 +230,8 @@ sent straight to the database, the guardrail without repair, and the guardrail w
 repairs. Execution accuracy compares the returned rows with those of a reference query.
 
 {nl_text}
+Reading this table: in this run the model made no mistake that the guardrail could detect, so the three setups scored the same and the repair loop did not fire. The benchmark therefore shows that the guardrail did not reduce correctness; it does not show a benefit, which the SQL sets and the repair stress test measure. The questions were also used to decide on the value-hint fix, so they are not an independent test. Time per question is almost entirely model generation; differences of a few tens of milliseconds between setups are within noise.
+
 The unsafe requests in this benchmark were mostly refused by the model itself (it was only told
 about permitted tables), so that test measures the prompt rather than the guardrail. The guardrail
 is measured by the SQL sets above.
@@ -295,7 +297,7 @@ See `README.md`. Evaluation commands: `python -m evaluation.run_eval`, `run_hold
 """
 
 extra = ""
-for name in ("repair_stress_section.md",):
+for name in ("repair_stress_section.md", "cost_model_section.md"):
     sec = OUT / name
     if sec.exists():
         body = sec.read_text(encoding="utf-8").strip()
@@ -307,5 +309,6 @@ if extra and marker in report:
 
 (OUT / "REPORT.md").write_text(report, encoding="utf-8")
 print("Wrote", OUT / "REPORT.md")
+
 
 

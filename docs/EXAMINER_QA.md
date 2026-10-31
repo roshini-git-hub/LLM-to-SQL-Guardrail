@@ -107,3 +107,13 @@ fresh statistics, which is the planner's best case. Stale statistics are the nex
 **22. How were your cost thresholds chosen?**
 By hand. I later measured how planner cost relates to real running time on the test database
 (see threshold calibration) to check what the thresholds mean in milliseconds. TODO: add the result.
+
+**21 (update). Did you try a learned cost model, and what did you find?**
+Yes, as an experiment. I ran about 320 generated queries with EXPLAIN ANALYZE and trained a gradient
+boosting model to predict running time from plan features. On query shapes it had not seen, it estimated
+running time somewhat more accurately than the calibrated planner cost (log error 0.36 against 0.43;
+90th-percentile q-error 2.5 against 3.7), but it ranked queries no better, and both separated slow from fast
+queries perfectly, which is an easy distinction here. Its main input was the planner's own cost (about 88%
+of its feature importance). Because the guardrail only needs to decide whether a query is heavy, I kept
+the planner cost as the signal. Limits: about 320 queries from one schema, 14 timeouts recorded as
+5,000 ms, and freshly analysed statistics, which is the planner's best case. Stale statistics are untested.

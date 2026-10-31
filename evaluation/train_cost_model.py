@@ -16,6 +16,8 @@ F = Path("docs") / "figures"
 F.mkdir(parents=True, exist_ok=True)
 
 df = pd.read_csv(R / "cost_data.csv")
+if (R / "cost_data_gap.csv").exists():
+    df = pd.concat([df, pd.read_csv(R / "cost_data_gap.csv")], ignore_index=True)
 true_ms = df["time_ms"].values
 y = np.log1p(true_ms)
 
@@ -76,6 +78,7 @@ print(summary.to_string(index=False))
 
 model = GradientBoostingRegressor(n_estimators=200, max_depth=3, random_state=0).fit(X, y)
 imp = pd.Series(model.feature_importances_, index=feature_cols).sort_values(ascending=False)
+imp.to_csv(R / "cost_model_importance.csv")
 print("\nMost influential plan features:")
 print(imp.head(8).round(3).to_string())
 
@@ -100,3 +103,4 @@ axes[1].set_title("Learned model vs actual time")
 plt.tight_layout()
 plt.savefig(F / "cost_model.png", dpi=160)
 print("\nFigure saved to docs\\figures\\cost_model.png")
+
