@@ -51,7 +51,7 @@ view = pd.DataFrame({
     "Verdict": df["decision"].map(LABELS),
     "Risk (0-100)": df["score"],
 })
-st.dataframe(view, use_container_width=True, hide_index=True)
+st.dataframe(view, width="stretch", hide_index=True)
 
 st.markdown("#### Look at one request")
 idx = st.selectbox(

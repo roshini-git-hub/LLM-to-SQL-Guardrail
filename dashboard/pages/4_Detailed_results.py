@@ -33,7 +33,7 @@ c3.metric("Precision (full)", f'{full.precision}%')
 c4.metric("Avg latency (full)", f'{full.avg_latency_ms} ms')
 
 st.markdown("### Summary table")
-st.dataframe(summary, use_container_width=True, hide_index=True)
+st.dataframe(summary, width="stretch", hide_index=True)
 
 left, right = st.columns(2)
 with left:
@@ -50,9 +50,9 @@ missed = g[(g.label != "safe") & (~g.flagged)]
 wrong = g[(g.label == "safe") & (g.flagged)]
 
 st.markdown(f"**Missed unsafe queries ({len(missed)})**")
-st.dataframe(missed[["label", "sql"]], use_container_width=True, hide_index=True)
+st.dataframe(missed[["label", "sql"]], width="stretch", hide_index=True)
 st.markdown(f"**False positives ({len(wrong)})**")
-st.dataframe(wrong[["sql"]], use_container_width=True, hide_index=True)
+st.dataframe(wrong[["sql"]], width="stretch", hide_index=True)
 
 # ---------------------------------------------------------------- held-out set
 holdout_path = RESULTS / "holdout_summary.csv"
@@ -61,7 +61,7 @@ if holdout_path.exists():
     st.markdown("### Held-out test set")
     st.caption("Queries written after the rules were designed, including evasion attempts.")
     holdout = pd.read_csv(holdout_path)
-    st.dataframe(holdout, use_container_width=True, hide_index=True)
+    st.dataframe(holdout, width="stretch", hide_index=True)
     st.bar_chart(
         holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
@@ -77,11 +77,11 @@ if holdout_path.exists():
 
     if before_path.exists():
         st.markdown("**Before tuning** (first run on unseen queries)")
-        st.dataframe(pd.read_csv(before_path), use_container_width=True, hide_index=True)
+        st.dataframe(pd.read_csv(before_path), width="stretch", hide_index=True)
         st.markdown("**After tuning** (the held-out set has now been used for fixes)")
 
     holdout = pd.read_csv(holdout_path)
-    st.dataframe(holdout, use_container_width=True, hide_index=True)
+    st.dataframe(holdout, width="stretch", hide_index=True)
     st.bar_chart(
         holdout.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
@@ -94,7 +94,7 @@ if final_path.exists():
     st.markdown("### Final test set (run once, rules frozen)")
     st.caption("Queries written last, using attack styles not tested before. No tuning followed this run.")
     final = pd.read_csv(final_path)
-    st.dataframe(final, use_container_width=True, hide_index=True)
+    st.dataframe(final, width="stretch", hide_index=True)
     st.bar_chart(
         final.set_index("baseline")[["detection_rate", "false_positive_rate"]],
         stack=False,
@@ -107,7 +107,7 @@ if postfix_path.exists():
     st.markdown("### After post-evaluation fixes (not independent)")
     st.caption("Same queries re-run after adding allowlist entries and a recursive-query rule. "
                "These changes were made after seeing the results above, so this shows the fix works, not new generalization.")
-    st.dataframe(pd.read_csv(postfix_path), use_container_width=True, hide_index=True)
+    st.dataframe(pd.read_csv(postfix_path), width="stretch", hide_index=True)
 
 
 # ---------------------------------------------------------------- post-fix rerun
@@ -117,4 +117,4 @@ if postfix_path.exists():
     st.caption("Same queries re-run after adding allowlist entries and rules for star expansion, "
                "row locking and recursive queries. These changes were made after seeing the results "
                "above, so this shows the fixes work, not new generalization.")
-    st.dataframe(pd.read_csv(postfix_path), use_container_width=True, hide_index=True)
+    st.dataframe(pd.read_csv(postfix_path), width="stretch", hide_index=True)

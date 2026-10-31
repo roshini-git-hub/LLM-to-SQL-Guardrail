@@ -64,7 +64,7 @@ st.info(
 )
 
 st.markdown("#### The five approaches side by side")
-st.dataframe(view, use_container_width=True, hide_index=True)
+st.dataframe(view, width="stretch", hide_index=True)
 
 chart = view.set_index("Approach")[[BAD, GOOD]]
 try:

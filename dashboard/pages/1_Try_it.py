@@ -44,7 +44,7 @@ with tab_ask:
     cols = st.columns(len(ASK_EXAMPLES))
     for col, (label, text) in zip(cols, ASK_EXAMPLES):
         col.button(label, key=f"ask_{label}", on_click=set_value, args=("ask_text", text),
-                   use_container_width=True)
+                   width="stretch")
 
     question = st.text_input("Your question", key="ask_text",
                              placeholder="e.g. How many orders are there for each status?")
@@ -75,7 +75,7 @@ with tab_sql:
     cols = st.columns(3)
     for i, (label, text) in enumerate(SQL_EXAMPLES):
         cols[i % 3].button(label, key=f"sql_{label}", on_click=set_value, args=("sql_text", text),
-                           use_container_width=True)
+                           width="stretch")
 
     sql = st.text_area("SQL command", key="sql_text", height=130)
     if st.button("Check and run", type="primary", key="run_sql"):

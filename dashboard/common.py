@@ -115,7 +115,7 @@ def explain_reason(text: str) -> str:
 
 def show_verdict(rec: dict):
     decision = rec.get("decision", "BLOCK")
-    label, icon, text = VERDICTS.get(decision, ("Unknown", "?", ""))
+    label, icon, text = VERDICTS.get(decision, ("Unknown", "\u2754", ""))
     color = COLORS.get(decision, "#8B949E")
     st.markdown(
         f'<div class="verdict" style="border-color:{color}">'
@@ -173,7 +173,7 @@ def show_steps(resp: dict):
                  "warn": "Looks heavy", "skip": "Skipped"},
         "run": {"ok": "Ran with safe limits", "skip": "Did not run"},
     }
-    v_label, v_icon, _ = VERDICTS.get(decision, ("Unknown", "?", ""))
+    v_label, v_icon, _ = VERDICTS.get(decision, ("Unknown", "\u2754", ""))
     items = [
         ("1. Rules check", "Is this query even allowed?", f'{icons[rules]} {words["rules"][rules]}'),
         ("2. Cost check", "How heavy would it be?", f'{icons[cost]} {words["cost"][cost]}'),
@@ -205,7 +205,7 @@ def show_response(resp: dict, with_steps: bool = True):
         took = resp.get("elapsed_ms")
         suffix = f", ran in {took:.0f} ms" if took is not None else ""
         st.markdown(f"**Result** ({len(df)} rows{suffix})")
-        st.dataframe(df, use_container_width=True)
+        st.dataframe(df, width="stretch")
 
     with st.expander("Technical details"):
         st.write("Raw reasons from the guardrail:")
