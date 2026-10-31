@@ -1,0 +1,301 @@
+sql,template,time_ms,timed_out,planner_cost,max_cost,root_rows,max_rows,plan_width,n_nodes,n_relations,seq_scan_rows,n_seq_scan,n_index_scan,n_index_only_scan,n_bitmap_heap_scan,n_hash_join,n_nested_loop,n_merge_join,n_hash,n_sort,n_aggregate,n_hashaggregate,n_groupaggregate,n_limit,n_gather,n_materialize
+"SELECT p.category, sum(oi.quantity * oi.unit_price) FROM order_items oi JOIN products p ON p.product_id = oi.product_id WHERE oi.quantity >= 2 GROUP BY p.category",4,180.899,False,10496.56,10496.56,5,200433,39,8,2,200633,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 395 ORDER BY o.total_amount DESC LIMIT 42",5,107.958,False,8148.75,20626.6,42,108545,23,7,2,118545,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT date_trunc('month', order_date), count(*) FROM orders WHERE status = 'placed' GROUP BY 1 ORDER BY 1",13,41.798,False,9132.75,9132.75,50300,50300,16,3,1,50300,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 475 ORDER BY o.total_amount DESC LIMIT 470",5,104.587,False,9990.74,22202.25,470,106657,23,7,2,116657,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 317,7,92.373,False,18994.43,77294.85,317,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 3425 GROUP BY status",1,57.584,False,4230.4,4230.4,4,37240,16,5,1,37240,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 743 GROUP BY status",1,65.994,False,4546.84,4546.84,4,100529,16,5,1,100529,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 494,7,80.397,False,19815.12,78094.89,494,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4775) LIMIT 1950,15,33.95,False,4306.36,4579.78,1950,10000,13,6,2,19077,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4796 LIMIT 416",0,1.672,False,205.88,4073.0,416,8230,10,2,1,8230,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1811 LIMIT 57",0,0.102,False,1.81,4073.0,57,128005,10,2,1,128005,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1100,7,89.986,False,21329.48,79538.54,1100,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 4686,7,106.277,False,24361.44,82152.11,4686,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4679 GROUP BY status",1,42.826,False,4082.49,4082.49,4,7659,16,5,1,7659,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 3060",9,0.891,False,38.6,25225.5,3060,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT status, count(*) FROM orders WHERE total_amount > 514 GROUP BY status",1,62.409,False,4572.99,4572.99,4,105759,16,5,1,105759,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 21283 ORDER BY 2 DESC LIMIT 57",8,84.075,False,4835.64,4843.78,57,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 4365,7,103.825,False,24196.02,82024.14,4365,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'delivered' LIMIT 963",6,26.127,False,1286.94,202324.27,963,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 15849 ORDER BY 2 DESC LIMIT 97",8,81.832,False,4848.45,4856.5,97,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 174 = p.product_id % 91",10,3.936,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 18209 ORDER BY 2 DESC LIMIT 131",8,76.387,False,4855.73,4863.69,131,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 383 AND 860",14,0.076,False,5.0,5.0,94,94,17,1,1,94,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT p.category, sum(oi.quantity * oi.unit_price) FROM order_items oi JOIN products p ON p.product_id = oi.product_id WHERE oi.quantity >= 1 GROUP BY p.category",4,233.765,False,11125.1,11125.1,5,250000,39,8,2,250200,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+SELECT count(*) FROM order_items WHERE quantity >= 3,2,64.752,False,8322.79,8322.79,1,150225,8,4,1,150225,1,0,0,0,0,0,0,0,0,2,0,0,0,1,0
+SELECT count(*) FROM order_items WHERE quantity >= 4,2,191.144,False,8198.18,8198.18,1,100383,8,4,1,100383,1,0,0,0,0,0,0,0,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1575",6,33.674,False,2112.3,202294.8,1575,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 2580,7,126.105,False,23039.49,81075.87,2580,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT p.category, sum(oi.quantity * oi.unit_price) FROM order_items oi JOIN products p ON p.product_id = oi.product_id WHERE oi.quantity >= 3 GROUP BY p.category",4,162.857,False,9859.89,9859.89,5,150225,39,8,2,150425,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 20002 ORDER BY 2 DESC LIMIT 121",8,82.153,False,4853.8,4861.79,121,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 766 LIMIT 977",0,0.394,False,23.41,4073.0,977,169998,10,2,1,169998,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.city, count(*) FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'placed' GROUP BY c.city",3,59.932,False,4616.0,4616.0,5,29588,16,8,2,39588,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2536 LIMIT 672",0,0.393,False,27.7,4073.0,672,98804,10,2,1,98804,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 23322 ORDER BY 2 DESC LIMIT 119",8,74.67,False,4853.4,4861.39,119,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT p.category, sum(oi.quantity * oi.unit_price) FROM order_items oi JOIN products p ON p.product_id = oi.product_id WHERE oi.quantity >= 4 GROUP BY p.category",4,141.152,False,9227.87,9227.87,5,100383,39,8,2,100583,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 187 AND 424",14,0.075,False,5.0,5.0,43,43,17,1,1,43,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 2911) LIMIT 354,15,61.966,False,4417.85,8091.07,354,83606,13,5,2,83606,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 17177 ORDER BY 2 DESC LIMIT 20",8,99.063,False,4810.49,4818.73,20,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT c.city, count(*) FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'delivered' GROUP BY c.city",3,69.182,False,4616.9,4616.9,5,29706,16,8,2,39706,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2028 GROUP BY status",1,70.302,False,4394.29,4394.29,4,70019,16,5,1,70019,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 4067 ORDER BY o.total_amount DESC LIMIT 46",5,92.782,False,5183.47,7751.3,46,22375,23,7,2,32375,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1131,7,104.194,False,21383.21,79588.66,1131,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT date_trunc('month', order_date), count(*) FROM orders WHERE status = 'delivered' GROUP BY 1 ORDER BY 1",13,59.61,False,9154.31,9154.31,50500,50500,16,3,1,50500,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 233 = p.product_id % 399",10,3.614,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 128 AND 555",14,0.077,False,5.0,5.0,76,76,17,1,1,76,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 1239 GROUP BY status",1,90.782,False,4488.46,4488.46,4,88852,16,5,1,88852,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.city, count(*) FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'shipped' GROUP BY c.city",3,67.71,False,4612.8,4612.8,5,29169,16,8,2,39169,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4826 LIMIT 196",0,1.078,False,113.09,4073.0,196,7059,10,2,1,7059,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items WHERE quantity >= 5,2,78.916,False,8073.68,8073.68,1,50583,8,4,1,50583,1,0,0,0,0,0,0,0,0,2,0,0,0,1,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 4639 ORDER BY o.total_amount DESC LIMIT 168",5,56.965,False,4660.22,9315.21,168,14625,23,7,2,8603,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4222) LIMIT 1956,15,61.656,False,4439.14,4726.67,1956,31596,13,6,2,41596,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 23157 ORDER BY 2 DESC LIMIT 194",8,104.381,False,4865.28,4873.08,194,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4581 LIMIT 411",0,0.989,False,98.22,4073.0,411,17044,10,2,1,17044,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 3228 ORDER BY o.total_amount DESC LIMIT 58",5,69.119,False,5937.07,10730.27,58,41738,23,7,2,51738,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 137",6,9.018,False,186.99,202192.61,137,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items WHERE quantity >= 2,2,87.308,False,8448.31,8448.31,1,200433,8,4,1,200433,1,0,0,0,0,0,0,0,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 706",6,19.014,False,947.33,202294.8,706,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 4354 ORDER BY 2 DESC LIMIT 5",8,91.567,False,4777.3,4785.57,5,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 18583 ORDER BY 2 DESC LIMIT 30",8,75.958,False,4820.22,4828.43,30,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 208) LIMIT 154,15,67.107,False,4611.64,8361.44,154,191753,13,5,2,191753,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 324 AND 786",14,0.083,False,5.0,5.0,89,89,17,1,1,89,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4933) LIMIT 755,15,38.596,False,4210.95,4409.81,755,10000,13,6,2,12676,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1748",6,36.447,False,2344.22,202294.8,1748,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 993",6,23.964,False,1349.83,202192.61,993,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 305",6,12.337,False,409.76,202294.8,305,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2806 GROUP BY status",1,53.846,False,4302.59,4302.59,4,51678,16,5,1,51678,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 3920,11,103.697,False,7855.72,7855.72,1,117647,8,7,2,143548,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT date_trunc('month', order_date), count(*) FROM orders WHERE status = 'shipped' GROUP BY 1 ORDER BY 1",13,40.756,False,9055.92,9055.92,49587,49587,16,3,1,49587,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1691,7,95.705,False,22173.9,80314.01,1691,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4327) LIMIT 750,15,57.113,False,4416.48,7784.87,750,27403,13,5,2,27403,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 398 AND 941",14,0.077,False,5.0,5.0,104,104,17,1,1,104,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 183 = p.product_id % 315",10,4.715,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 1368 ORDER BY o.total_amount DESC LIMIT 187",5,81.421,False,8303.14,18148.86,187,85802,23,7,2,95802,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 559463,12,5000.0,True,200960688.36,200960688.36,1,27933272838,8,7,2,482765,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 4128,7,129.066,False,24067.69,81923.46,4128,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 26834 ORDER BY 2 DESC LIMIT 199",8,79.952,False,4865.9,4873.69,199,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 237 ORDER BY o.total_amount DESC LIMIT 19",5,89.301,False,7629.13,20524.43,19,112152,23,7,2,122152,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 496179,12,5000.0,True,178895243.33,178895243.33,1,24865866593,8,7,2,457205,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'delivered' LIMIT 1965",6,41.493,False,2625.07,202324.27,1965,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 659) LIMIT 461,15,96.66,False,4685.55,8317.8,461,174297,13,5,2,174297,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 3850 GROUP BY status",1,52.51,False,4181.85,4181.85,4,27531,16,5,1,27531,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 991",6,24.221,False,1329.4,202294.8,991,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 186 AND 487",14,0.074,False,5.0,5.0,55,55,17,1,1,55,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 374 AND 605",14,0.073,False,5.0,5.0,45,45,17,1,1,45,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 898",6,25.403,False,1221.39,202188.77,898,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 349669,12,5000.0,True,125552246.08,125552246.08,1,17450538878,8,7,2,395414,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 3242 GROUP BY status",1,56.095,False,4251.2,4251.2,4,41401,16,5,1,41401,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1494",6,35.625,False,2003.71,202294.8,1494,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4839 LIMIT 936",0,6.626,False,581.59,4073.0,936,6555,10,2,1,6555,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1262",6,26.957,False,1716.12,202188.77,1262,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT date_trunc('month', order_date), count(*) FROM orders WHERE status = 'cancelled' GROUP BY 1 ORDER BY 1",13,45.451,False,9058.72,9058.72,49613,49613,16,3,1,49613,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 2880",9,0.854,False,36.32,25225.5,2880,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT status, count(*) FROM orders WHERE total_amount > 116 GROUP BY status",1,68.202,False,4619.05,4619.05,4,114971,16,5,1,114971,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1150,7,94.287,False,21415.47,79618.7,1150,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1701",6,33.539,False,2312.79,202188.77,1701,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 24 AND 658",14,0.085,False,5.0,5.0,124,124,17,1,1,124,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 2670,11,108.356,False,8552.69,8552.69,1,117647,8,7,2,172601,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.city, count(*) FROM customers c JOIN orders o ON o.customer_id = c.customer_id WHERE o.status = 'cancelled' GROUP BY c.city",3,77.337,False,4612.92,4612.92,5,29184,16,8,2,39184,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 191 AND 870",14,0.093,False,5.0,5.0,126,126,17,1,1,126,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 4243",9,1.182,False,53.52,25225.5,4243,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1099",6,25.278,False,1494.58,202188.77,1099,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3605 LIMIT 805",0,0.666,False,58.34,4073.0,805,56198,10,2,1,56198,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items WHERE quantity >= 1,2,75.719,False,8572.23,8572.23,1,250000,8,4,1,250000,1,0,0,0,0,0,0,0,0,2,0,0,0,1,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 158079,12,5000.0,True,56619669.86,56619669.86,1,7868450795,8,7,2,250000,1,1,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 4943 ORDER BY 2 DESC LIMIT 147",8,88.514,False,4858.52,4866.45,147,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4246 LIMIT 553",0,0.822,False,73.3,4073.0,553,30729,10,2,1,30729,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 879,7,89.551,False,20899.23,79134.08,879,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 39 AND 655",14,0.079,False,5.0,5.0,119,119,17,1,1,119,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 533376,12,5000.0,True,192075086.99,192075086.99,1,26698059920,8,7,2,472472,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1566",6,38.245,False,2100.23,202294.8,1566,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 42 AND 854",14,0.098,False,5.0,5.0,161,161,17,1,1,161,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT p.category, sum(oi.quantity * oi.unit_price) FROM order_items oi JOIN products p ON p.product_id = oi.product_id WHERE oi.quantity >= 5 GROUP BY p.category",4,129.416,False,8596.37,8596.37,5,50583,39,8,2,50783,2,0,0,0,1,0,0,1,1,2,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 7534 ORDER BY 2 DESC LIMIT 182",8,105.541,False,4863.72,4871.55,182,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 2038,7,142.842,False,22550.98,80650.6,2038,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 182 = p.product_id % 336",10,5.054,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 113 AND 859",14,0.089,False,5.0,5.0,145,145,17,1,1,145,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 996 GROUP BY status",1,81.043,False,4516.19,4516.19,4,94399,16,5,1,94399,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2588 ORDER BY o.total_amount DESC LIMIT 42",5,84.311,False,6361.09,12895.16,42,56860,23,7,2,66860,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 3518",9,1.005,False,44.37,25225.5,3518,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT status, count(*) FROM orders WHERE total_amount > 2480 GROUP BY status",1,61.233,False,4341.09,4341.09,4,59379,16,5,1,59379,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 162949,12,5000.0,True,58192592.46,58192592.46,1,8087061931,8,7,2,250000,1,1,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 2999) LIMIT 302,15,47.918,False,4389.37,8082.5,302,80177,13,5,2,80177,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 1798) LIMIT 1539,15,59.787,False,4673.52,4976.05,1539,128534,13,6,2,138534,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 3262) LIMIT 1822,15,56.251,False,4536.26,4828.61,1822,69575,13,6,2,79575,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 340",6,11.959,False,462.99,202188.77,340,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 313 = p.product_id % 256",10,3.318,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 755 ORDER BY o.total_amount DESC LIMIT 374",5,92.034,False,9481.36,20967.33,374,100252,23,7,2,110252,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2768 ORDER BY o.total_amount DESC LIMIT 288",5,78.222,False,6971.62,12985.31,288,52581,23,7,2,62581,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 797",6,22.15,False,1069.32,202294.8,797,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 1872 GROUP BY status",1,67.969,False,4412.68,4412.68,4,73696,16,5,1,73696,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 858) LIMIT 182,15,62.418,False,4558.48,8297.56,182,166202,13,5,2,166202,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 102 AND 677",14,0.149,False,5.0,5.0,109,109,17,1,1,109,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 3459,11,109.122,False,8109.0,8109.0,1,117647,8,7,2,154106,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 4395 ORDER BY o.total_amount DESC LIMIT 475",5,55.855,False,5165.84,11471.99,475,24544,23,7,2,14438,1,1,0,0,0,1,0,0,1,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 4061,7,118.752,False,24030.36,81893.95,4061,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 95 = p.product_id % 192",10,6.706,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1501 LIMIT 445",0,0.377,False,12.9,4073.0,445,140481,10,2,1,140481,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 147 AND 418",14,0.108,False,5.0,5.0,54,54,17,1,1,54,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 2144",9,1.391,False,27.04,25225.5,2144,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT status, count(*) FROM orders WHERE total_amount > 1821 GROUP BY status",1,75.704,False,4419.34,4419.34,4,75028,16,5,1,75028,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 996 LIMIT 474",0,0.394,False,12.03,4073.0,474,160478,10,2,1,160478,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4530 LIMIT 437",0,1.4,False,92.97,4073.0,437,19145,10,2,1,19145,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 147 AND 533",14,0.077,False,5.0,5.0,72,72,17,1,1,72,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1953 LIMIT 970",0,0.519,False,32.41,4073.0,970,121901,10,2,1,121901,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 1322 GROUP BY status",1,67.502,False,4479.05,4479.05,4,86971,16,5,1,86971,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 4360",9,1.188,False,54.99,25225.5,4360,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 2375,11,108.547,False,8717.04,8717.04,1,117647,8,7,2,179452,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 564",6,24.164,False,767.44,202188.77,564,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 302) LIMIT 41,15,64.25,False,4559.26,8352.33,41,188110,13,5,2,188110,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4142 LIMIT 574",0,0.981,False,67.28,4073.0,574,34751,10,2,1,34751,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4212) LIMIT 982,15,39.865,False,4405.28,4727.86,982,31957,13,6,2,41957,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 3540 GROUP BY status",1,51.396,False,4216.99,4216.99,4,34558,16,5,1,34558,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 4482",9,1.574,False,56.53,25225.5,4482,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 2521) LIMIT 1418,15,64.373,False,4596.19,4903.08,1418,99343,13,6,2,109343,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2847 ORDER BY o.total_amount DESC LIMIT 32",5,74.386,False,6048.5,11879.11,32,50733,23,7,2,60733,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2093 GROUP BY status",1,70.776,False,4386.8,4386.8,4,68521,16,5,1,68521,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 183",6,9.018,False,246.21,202294.8,183,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 3130",9,1.608,False,39.48,25225.5,3130,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT name, price FROM products WHERE price BETWEEN 353 AND 689",14,0.149,False,5.0,5.0,62,62,17,1,1,62,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 23697 ORDER BY 2 DESC LIMIT 80",8,84.104,False,4843.8,4851.89,80,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1518 LIMIT 171",0,0.296,False,4.98,4073.0,171,139843,10,2,1,139843,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4481) LIMIT 672,15,39.727,False,4360.45,7595.09,672,21123,13,5,2,21123,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3126 LIMIT 95",0,0.145,False,5.15,4073.0,95,75128,10,2,1,75128,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 518",6,23.122,False,704.92,202188.77,518,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 50,7,122.747,False,15632.68,73964.25,50,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 735 GROUP BY status",1,76.154,False,4547.77,4547.77,4,100714,16,5,1,100714,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 184 LIMIT 316",0,0.185,False,6.68,4073.0,316,192723,10,2,1,192723,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4335 GROUP BY status",1,60.412,False,4123.81,4123.81,4,15922,16,5,1,15922,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 4897",9,1.78,False,61.76,25225.5,4897,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2671 ORDER BY o.total_amount DESC LIMIT 373",5,86.434,False,7197.78,13471.95,373,54931,23,7,2,64931,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 1224) LIMIT 591,15,59.94,False,4678.69,8261.17,591,151644,13,5,2,151644,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 1185,11,134.55,False,9394.3,9394.3,1,123413,8,7,2,207683,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4202 LIMIT 652",0,1.208,False,82.08,4073.0,652,32352,10,2,1,32352,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1873",6,33.858,False,2546.56,202188.77,1873,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 4141,7,132.217,False,24074.88,81929.13,4141,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 27637 ORDER BY 2 DESC LIMIT 9",8,100.118,False,4791.36,4799.63,9,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 342 GROUP BY status",1,68.971,False,4592.99,4592.99,4,109758,16,5,1,109758,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2954 GROUP BY status",1,56.598,False,4285.05,4285.05,4,48171,16,5,1,48171,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 3085) LIMIT 1721,15,50.43,False,4550.74,4846.73,1721,76812,13,6,2,86812,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1295",6,27.273,False,1736.93,202294.8,1295,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4353 LIMIT 707",0,1.302,False,109.44,4073.0,707,26312,10,2,1,26312,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 574 LIMIT 776",0,0.324,False,17.81,4073.0,776,177476,10,2,1,177476,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4384) LIMIT 198,15,44.732,False,4207.27,7726.01,198,25008,13,5,2,25008,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 551",9,0.46,False,6.95,25225.5,551,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 3881,11,95.107,False,7877.31,7877.31,1,117647,8,7,2,144448,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 1681,11,112.273,False,9116.71,9116.71,1,117647,8,7,2,196112,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 3143,7,113.18,False,23461.14,81431.84,3143,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2353 GROUP BY status",1,68.336,False,4355.87,4355.87,4,62334,16,5,1,62334,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 1624,11,119.201,False,9148.28,9148.28,1,117647,8,7,2,197428,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 1207 GROUP BY status",1,68.632,False,4492.09,4492.09,4,89579,16,5,1,89579,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 5372 ORDER BY 2 DESC LIMIT 8",8,86.493,False,4788.55,4796.82,8,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 560",6,15.692,False,761.62,202192.61,560,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 815) LIMIT 1427,15,64.995,False,4767.84,5074.41,1427,167876,13,6,2,177876,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1840",6,43.931,False,2467.55,202294.8,1840,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 2563,7,101.278,False,23025.58,81063.95,2563,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 3874) LIMIT 45,15,47.004,False,4205.03,7979.57,45,45835,13,5,2,45835,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 3169) LIMIT 439,15,64.478,False,4424.75,8065.12,439,73352,13,5,2,73352,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 117 AND 477",14,0.094,False,5.0,5.0,70,70,17,1,1,70,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 5644 ORDER BY 2 DESC LIMIT 196",8,119.783,False,4865.53,4873.33,196,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 2955,7,140.829,False,23327.98,81320.61,2955,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4167 GROUP BY status",1,55.349,False,4143.47,4143.47,4,19855,16,5,1,19855,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 168 = p.product_id % 304",10,4.869,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 258 AND 804",14,0.123,False,5.0,5.0,104,104,17,1,1,104,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 29 LIMIT 982",0,0.401,False,20.11,4073.0,982,198915,10,2,1,198915,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 3702,7,122.44,False,23821.57,81727.04,3702,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 1152 ORDER BY o.total_amount DESC LIMIT 218",5,88.994,False,8630.99,19040.79,218,90738,23,7,2,100738,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2714 GROUP BY status",1,68.181,False,4313.72,4313.72,4,53905,16,5,1,53905,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2771 LIMIT 869",0,0.734,False,39.65,4073.0,869,89265,10,2,1,89265,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 1603 ORDER BY o.total_amount DESC LIMIT 370",5,84.987,False,8468.77,17658.19,370,80278,23,7,2,90278,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2374 LIMIT 269",0,0.239,False,10.42,4073.0,269,105109,10,2,1,105109,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 3218 ORDER BY o.total_amount DESC LIMIT 204",5,72.176,False,6343.55,11147.56,204,41978,23,7,2,51978,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 4826) LIMIT 166,15,46.201,False,4141.45,6239.2,166,7059,13,5,2,7059,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 3506 ORDER BY o.total_amount DESC LIMIT 391",5,70.259,False,6225.8,10245.28,391,35343,23,7,2,45343,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 1229",9,0.714,False,15.5,25225.5,1229,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'delivered' LIMIT 398",6,12.562,False,532.4,202324.27,398,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 449525,12,5000.0,True,162104450.9,162104450.9,1,22531747700,8,7,2,437755,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT name, price FROM products WHERE price BETWEEN 399 AND 810",14,0.096,False,5.0,5.0,78,78,17,1,1,78,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 293 AND 963",14,0.098,False,5.0,5.0,125,125,17,1,1,125,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3365 LIMIT 471",0,0.432,False,29.2,4073.0,471,65694,10,2,1,65694,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 5540 ORDER BY 2 DESC LIMIT 169",8,103.225,False,4861.91,4869.78,169,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 258 AND 451",14,0.073,False,5.0,5.0,38,38,17,1,1,38,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 291 AND 531",14,0.078,False,5.0,5.0,43,43,17,1,1,43,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 1955 ORDER BY o.total_amount DESC LIMIT 159",5,113.64,False,7574.66,15797.51,159,71662,23,7,2,81662,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 255",6,15.612,False,347.29,202192.61,255,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4100 GROUP BY status",1,58.52,False,4151.55,4151.55,4,21471,16,5,1,21471,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 264 AND 964",14,0.08,False,5.0,5.0,133,133,17,1,1,133,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 3686) LIMIT 885,15,86.658,False,4460.99,4787.06,885,53116,13,6,2,63116,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 393 AND 823",14,0.078,False,5.0,5.0,81,81,17,1,1,81,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 4293 ORDER BY o.total_amount DESC LIMIT 112",5,59.999,False,5109.46,7048.01,112,16969,23,7,2,26969,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2770 ORDER BY o.total_amount DESC LIMIT 390",5,72.278,False,7095.91,13092.36,390,52533,23,7,2,62533,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2273 LIMIT 598",0,0.513,False,22.31,4073.0,598,109149,10,2,1,109149,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 1031) LIMIT 1416,15,72.675,False,4745.4,5052.36,1416,159056,13,6,2,169056,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1779,7,109.138,False,22275.65,80405.49,1779,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 2035 GROUP BY status",1,74.766,False,4393.47,4393.47,4,69855,16,5,1,69855,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 3652 ORDER BY o.total_amount DESC LIMIT 226",5,63.656,False,5912.07,9569.07,226,32026,23,7,2,42026,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 178) LIMIT 270,15,67.274,False,4659.1,8364.49,270,192971,13,5,2,192971,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3877 LIMIT 611",0,0.776,False,54.43,4073.0,611,45718,10,2,1,45718,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 609,7,100.558,False,20205.95,78472.3,609,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 4324 ORDER BY o.total_amount DESC LIMIT 442",5,60.41,False,5275.43,7086.8,442,16193,23,7,2,26193,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 518",6,20.006,False,704.56,202192.61,518,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 235671,12,5000.0,True,84676650.3,84676650.3,1,11768349445,8,7,2,250000,1,1,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 892) LIMIT 1938,15,65.347,False,4778.42,5066.6,1938,164753,13,6,2,174753,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 323 GROUP BY status",1,63.878,False,4595.11,4595.11,4,110182,16,5,1,110182,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1029 LIMIT 248",0,0.171,False,6.35,4073.0,248,159140,10,2,1,159140,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 2231 ORDER BY 2 DESC LIMIT 170",8,81.283,False,4862.06,4869.92,170,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 115 = p.product_id % 370",10,4.657,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 107 = p.product_id % 100",10,5.31,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4296 GROUP BY status",1,51.531,False,4128.67,4128.67,4,16894,16,5,1,16894,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 1570) LIMIT 804,15,64.795,False,4670.24,4999.23,804,137803,13,6,2,147803,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2470 LIMIT 481",0,0.334,False,19.33,4073.0,481,101361,10,2,1,101361,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 1995",9,0.64,False,25.16,25225.5,1995,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1130",6,23.093,False,1536.71,202188.77,1130,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 207 = p.product_id % 78",10,5.212,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 4082 LIMIT 916",0,1.634,False,99.91,4073.0,916,37341,10,2,1,37341,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT count(*) FROM customers c, products p WHERE c.customer_id % 265 = p.product_id % 91",10,3.251,False,1127.51,1127.51,1,10000,8,5,2,10200,2,0,0,0,1,0,0,1,0,1,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 126 AND 905",14,0.1,False,5.0,5.0,147,147,17,1,1,147,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2769 LIMIT 745",0,0.466,False,33.96,4073.0,745,89346,10,2,1,89346,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 415",6,13.38,False,564.64,202192.61,415,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 2392 LIMIT 766",0,0.621,False,29.89,4073.0,766,104372,10,2,1,104372,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 4061 GROUP BY status",1,67.48,False,4156.78,4156.78,4,22516,16,5,1,22516,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 8317 ORDER BY 2 DESC LIMIT 129",8,85.652,False,4855.35,4863.32,129,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 462 ORDER BY o.total_amount DESC LIMIT 490",5,93.174,False,10040.75,22284.34,490,106956,23,7,2,116956,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 13892 ORDER BY 2 DESC LIMIT 18",8,130.423,False,4807.97,4816.21,18,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 492 ORDER BY o.total_amount DESC LIMIT 99",5,93.03,False,8733.72,20942.81,99,106265,23,7,2,116265,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2573 ORDER BY o.total_amount DESC LIMIT 380",5,73.325,False,7323.42,13864.39,380,57258,23,7,2,67258,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 650 GROUP BY status",1,67.441,False,4557.84,4557.84,4,102728,16,5,1,102728,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 2697) LIMIT 400,15,52.845,False,4457.3,8112.91,400,92339,13,5,2,92339,1,1,0,0,0,1,0,0,0,1,0,0,1,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 261,11,134.594,False,9911.91,9911.91,1,152987,8,7,2,229259,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 15",6,2.141,False,20.99,202294.8,15,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT status, count(*) FROM orders WHERE total_amount > 661 GROUP BY status",1,62.334,False,4556.61,4556.61,4,102483,16,5,1,102483,1,0,0,0,0,0,0,0,1,2,0,0,0,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 1013 ORDER BY o.total_amount DESC LIMIT 292",5,88.155,False,8989.49,19766.48,292,94005,23,7,2,104005,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+SELECT c.name FROM customers c WHERE c.customer_id IN (SELECT customer_id FROM orders WHERE total_amount > 1699) LIMIT 788,15,62.815,False,4656.97,4986.53,788,132725,13,6,2,142725,2,0,0,0,1,0,0,1,0,1,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 2528 ORDER BY o.total_amount DESC LIMIT 425",5,72.511,False,7427.69,14082.05,425,58289,23,7,2,68289,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3878 LIMIT 210",0,0.27,False,18.73,4073.0,210,45678,10,2,1,45678,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT o.order_id, c.name FROM orders o JOIN customers c ON c.customer_id = o.customer_id WHERE o.total_amount > 3656 ORDER BY o.total_amount DESC LIMIT 103",5,68.804,False,5712.81,9373.95,103,31939,23,7,2,41939,2,0,0,0,1,0,0,1,1,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 3365 LIMIT 263",0,0.283,False,16.31,4073.0,263,65694,10,2,1,65694,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 285 LIMIT 485",0,0.234,False,10.46,4073.0,485,188786,10,2,1,188786,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 507 LIMIT 273",0,0.282,False,6.18,4073.0,273,180063,10,2,1,180063,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 183 AND 772",14,0.079,False,5.0,5.0,105,105,17,1,1,105,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 162 AND 404",14,0.093,False,5.0,5.0,44,44,17,1,1,44,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 4878,11,94.079,False,7304.55,7304.55,1,117647,8,7,2,120573,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT name, price FROM products WHERE price BETWEEN 334 AND 467",14,0.071,False,5.0,5.0,26,26,17,1,1,26,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT order_id, total_amount FROM orders WHERE total_amount > 1915 LIMIT 119",0,0.184,False,3.93,4073.0,119,123486,10,2,1,123486,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 1963",6,35.252,False,2667.54,202192.61,1963,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 264241,12,5000.0,True,94842004.89,94842004.89,1,13181471425,8,7,2,359840,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT name, price FROM products WHERE price BETWEEN 262 AND 536",14,0.109,False,5.0,5.0,51,51,17,1,1,51,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 103 AND 409",14,0.131,False,5.0,5.0,63,63,17,1,1,63,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 11741 ORDER BY 2 DESC LIMIT 86",8,116.418,False,4845.55,4853.62,86,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'placed' LIMIT 1058",6,47.293,False,1419.22,202294.8,1058,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.name FROM customers c, products p LIMIT 3956",9,1.926,False,49.9,25225.5,3956,2000000,24,5,2,10200,2,0,0,0,0,1,0,0,0,0,0,0,1,0,1
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 2678,7,116.727,False,23118.15,81143.11,2678,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 46 AND 672",14,0.081,False,5.0,5.0,121,121,17,1,1,121,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+"SELECT customer_id, sum(total_amount) FROM orders GROUP BY customer_id HAVING sum(total_amount) > 7826 ORDER BY 2 DESC LIMIT 29",8,98.919,False,4819.4,4827.62,29,200000,36,4,1,200000,1,0,0,0,0,0,0,0,1,1,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'cancelled' LIMIT 364",6,13.927,False,495.36,202192.61,364,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 1541",6,31.241,False,2095.32,202188.77,1541,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+SELECT * FROM order_items ORDER BY unit_price DESC LIMIT 1002,7,87.829,False,21149.77,79370.26,1002,500000,22,4,1,250000,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0
+SELECT count(*) FROM order_items a JOIN order_items b ON a.quantity = b.quantity WHERE a.item_id < 309201,12,5000.0,True,111196965.97,111196965.97,1,15455037234,8,7,2,378785,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+SELECT count(*) FROM orders a JOIN orders b ON a.total_amount = b.total_amount WHERE a.total_amount > 1631,11,107.778,False,9144.3,9144.3,1,117647,8,7,2,197262,2,0,0,0,1,0,0,1,0,2,0,0,0,1,0
+"SELECT c.name, p.category, oi.quantity FROM order_items oi JOIN orders o ON o.order_id = oi.order_id JOIN customers c ON c.customer_id = o.customer_id JOIN products p ON p.product_id = oi.product_id WHERE o.status = 'shipped' LIMIT 512",6,14.092,False,696.76,202188.77,512,600000,24,11,4,600000,1,3,0,0,0,3,0,0,0,0,0,0,1,0,0
+"SELECT name, price FROM products WHERE price BETWEEN 306 AND 593",14,0.103,False,5.0,5.0,52,52,17,1,1,52,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
