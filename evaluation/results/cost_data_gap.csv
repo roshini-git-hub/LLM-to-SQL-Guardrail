@@ -1,0 +1,22 @@
+sql,template,time_ms,timed_out,planner_cost,max_cost,root_rows,max_rows,plan_width,n_nodes,n_relations,seq_scan_rows,n_seq_scan,n_index_scan,n_index_only_scan,n_bitmap_heap_scan,n_hash_join,n_nested_loop,n_merge_join,n_hash,n_sort,n_aggregate,n_hashaggregate,n_groupaggregate,n_limit,n_gather,n_materialize
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 20,100,26.751,False,3075.82,3075.82,1,190000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 30,100,37.634,False,4726.03,4726.03,1,300000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 50,100,63.82,False,7726.44,7726.44,1,500000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 80,100,100.387,False,12227.03,12227.03,1,800000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 120,100,152.006,False,18377.85,18377.85,1,1210000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 200,100,243.427,False,30679.49,30679.49,1,2030000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 300,100,373.576,False,45981.54,45981.54,1,3050000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 500,100,682.991,False,76439.6,76439.6,1,5080000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 800,100,1082.837,False,122349.71,122349.71,1,8140000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 1200,100,1540.879,False,183411.86,183411.86,1,12210000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 2000,100,2523.736,False,305686.16,305686.16,1,20360000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 3000,100,5000.0,True,458568.53,458568.53,1,30550000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 5000,100,5000.0,True,764179.28,764179.28,1,50920000,8,5,2,10000,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM customers c CROSS JOIN order_items oi WHERE oi.item_id < 8000,100,5000.0,True,1152697.89,1152697.89,1,33170833,8,7,2,10000,1,0,0,1,0,1,0,0,0,2,0,0,0,1,0
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 1000,101,24.578,False,3088.75,3088.75,1,203600,8,5,2,200,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 3000,101,73.55,False,9259.4,9259.4,1,611000,8,5,2,200,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 10000,101,246.88,False,29744.78,29744.78,1,1964000,8,5,2,200,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 30000,101,749.163,False,89738.44,89738.44,1,5925800,8,5,2,200,1,0,1,0,0,1,0,0,0,1,0,0,0,0,1
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 100000,101,1067.145,False,274701.05,274701.05,1,8351667,8,6,2,200,1,0,1,0,0,1,0,0,0,2,0,0,0,1,0
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 300000,101,3224.847,False,820307.09,820307.09,1,25000167,8,6,2,200,1,0,1,0,0,1,0,0,0,2,0,0,0,1,0
+SELECT count(*) FROM products p CROSS JOIN order_items oi WHERE oi.item_id < 600000,101,5000.0,True,1632947.02,1632947.02,1,49999917,8,6,2,250200,2,0,0,0,0,1,0,0,0,2,0,0,0,1,0

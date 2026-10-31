@@ -7,6 +7,11 @@ from app.guardrail import policy
 
 R = Path("evaluation") / "results"
 df = pd.read_csv(R / "cost_data.csv")
+gap_file = R / "cost_data_gap.csv"
+if gap_file.exists():
+    extra = pd.read_csv(gap_file)
+    df = pd.concat([df, extra], ignore_index=True)
+    print(f"Including {len(extra)} extra queries from cost_data_gap.csv")
 
 done = df[(~df["timed_out"]) & (df["time_ms"] > 0)]
 timed = df[df["timed_out"]]
@@ -55,3 +60,4 @@ for target in (100, 1000, 5000):
 
 pd.DataFrame(rows).to_csv(R / "threshold_calibration.csv", index=False)
 print("\nSaved evaluation\\results\\threshold_calibration.csv")
+

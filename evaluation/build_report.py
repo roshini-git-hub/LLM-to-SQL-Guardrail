@@ -294,6 +294,18 @@ See `README.md`. Evaluation commands: `python -m evaluation.run_eval`, `run_hold
 `run_nl`, then `python -m evaluation.make_figures` and `python -m evaluation.build_report`.
 """
 
+extra = ""
+for name in ("repair_stress_section.md",):
+    sec = OUT / name
+    if sec.exists():
+        body = sec.read_text(encoding="utf-8").strip()
+        if body.splitlines()[0] not in report:
+            extra += body + "\n\n"
+marker = "## 7. Error analysis: what the evaluation found"
+if extra and marker in report:
+    report = report.replace(marker, extra + marker, 1)
+
 (OUT / "REPORT.md").write_text(report, encoding="utf-8")
 print("Wrote", OUT / "REPORT.md")
+
 
