@@ -10,6 +10,7 @@ MAX_REPAIRS = 2
 SECURITY_RULES = (
     "blocked_table", "sensitive_column", "forbidden_statement",
     "multiple_statements", "hidden_write", "forbidden_function", "unknown_table",
+    "star_on_restricted_table", "row_locking", "select_into", "recursive_cte",
 )
 
 
@@ -53,3 +54,4 @@ def ask(question: str) -> AskResult:
         repairs += 1
 
     return AskResult(question, resp, attempts, repairs)
+
