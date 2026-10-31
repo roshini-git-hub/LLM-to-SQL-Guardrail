@@ -1,0 +1,7 @@
+threshold,cost_units,estimated_ms,inside_observed_range
+COST_LOW,20000,201.8,True
+COST_MEDIUM,100000,849.0,False
+COST_HIGH,500000,3571.3,False
+cost_for_100ms,9106,100.0,
+cost_for_1000ms,120128,1000.0,
+cost_for_5000ms,728946,5000.0,

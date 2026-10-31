@@ -95,3 +95,15 @@ blocked queries and finding the rules that fire most often.
 **20. How do I reproduce your results?**
 README.md lists setup and commands: the database scripts, then python -m evaluation.run_eval, run_holdout,
 run_final and run_nl, and pytest.
+
+**21. Did you try a learned cost model?**
+Yes, as an experiment. About 300 generated queries were run with EXPLAIN ANALYZE and a gradient
+boosting model predicted running time from plan features. On query shapes it had seen it was much more
+accurate than the calibrated planner cost, but on unseen shapes (the fair test) the result was mixed
+and not clearly better, and it mostly relied on the planner's own cost. So I kept the planner cost
+as the signal. Limits: small data from one schema, timed-out queries recorded as 5,000 ms, and
+fresh statistics, which is the planner's best case. Stale statistics are the next experiment.
+
+**22. How were your cost thresholds chosen?**
+By hand. I later measured how planner cost relates to real running time on the test database
+(see threshold calibration) to check what the thresholds mean in milliseconds. TODO: add the result.
