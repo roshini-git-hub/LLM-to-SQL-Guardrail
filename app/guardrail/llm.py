@@ -1,14 +1,19 @@
+"""Talks to the local LLM (Ollama). The prompt is built from the role's live schema snapshot,
+so the model only ever sees tables and columns that role is allowed to read."""
 import os
 import re
+import time
+from typing import List, Optional
 
 import ollama
 from dotenv import load_dotenv
 
 from app.guardrail import policy
+from app.guardrail.schema_loader import SchemaSnapshot
 
 load_dotenv()
 
-MODEL = os.getenv("OLLAMA_MODEL", "gemma4:e4b")
+MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
 HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 _client = None
 
@@ -20,37 +25,72 @@ def _get_client():
     return _client
 
 
-def schema_text() -> str:
+_SHORT_TYPES = (("timestamp", "timestamp"), ("character varying", "text"), ("character", "text"),
+                ("numeric", "numeric"), ("double precision", "numeric"), ("bigint", "integer"),
+                ("smallint", "integer"))
+
+
+def _short_type(pg_type: str) -> str:
+    for prefix, short in _SHORT_TYPES:
+        if pg_type.startswith(prefix):
+            return short
+    return pg_type
+
+
+def schema_text(snapshot: SchemaSnapshot) -> str:
+    """One line per readable table, listing ONLY the columns this role can SELECT."""
     lines = []
-    for table, cols in policy.ALLOWED_SCHEMA.items():
-        lines.append(f"{table}({', '.join(sorted(cols))})")
+    for t in sorted(snapshot.accessible_tables(), key=lambda t: t.name):
+        cols = ", ".join(f"{c.name} {_short_type(c.type)}" for c in t.visible_columns)
+        lines.append(f"{t.name}({cols})")
     return "\n".join(lines)
 
 
-RELATIONSHIPS = """orders.customer_id -> customers.customer_id
-order_items.order_id -> orders.order_id
-order_items.product_id -> products.product_id"""
-
-SYSTEM_PROMPT = f"""You translate questions into PostgreSQL SELECT queries.
-
-Database schema (the only tables and columns you may use):
-{schema_text()}
-
-Relationships:
-{RELATIONSHIPS}
-
-Rules:
-- Output exactly one SQL query and nothing else: no explanation, no markdown.
-- Only SELECT statements. Never modify data.
-- Use only the tables and columns listed above.
-- Never use SELECT *; list the columns you need.
-- Always join with explicit conditions.
-- Add LIMIT (at most {policy.MAX_LIMIT}) unless the query is an aggregate.
-- If the question cannot be answered with this schema, output exactly: CANNOT_ANSWER
-"""
+def relationships_text(snapshot: SchemaSnapshot) -> str:
+    return "\n".join(f"- {fk.describe()}" for fk in snapshot.usable_foreign_keys())
 
 
-def _extract_sql(text: str) -> str:
+def value_hints_text(snapshot: SchemaSnapshot) -> str:
+    return "\n".join(f"- {t}.{c}: " + ", ".join(repr(v) for v in values)
+                     for (t, c), values in sorted(snapshot.value_hints.items()))
+
+
+def system_prompt(snapshot: SchemaSnapshot) -> str:
+    parts = [
+        "You translate questions into PostgreSQL SELECT queries.",
+        "",
+        "Database schema (the only tables and columns you may use):",
+        schema_text(snapshot),
+    ]
+    rel = relationships_text(snapshot)
+    if rel:
+        parts += ["", "Foreign keys (only needed when a question requires columns from two "
+                      "tables; then join on exactly these):", rel]
+    hints = value_hints_text(snapshot)
+    if hints:
+        parts += ["", "Exact values stored in the data (copy these spellings exactly, "
+                      "they are case-sensitive):", hints]
+    rls = sorted({p.table for p in snapshot.policies})
+    if rls:
+        parts += ["", "Rows in " + ", ".join(rls) + " are already filtered for this user by "
+                      "the database; do not add extra filters for that."]
+    parts += [
+        "",
+        "Rules:",
+        "- Output exactly one SQL query and nothing else: no explanation, no markdown.",
+        "- PostgreSQL syntax only (no backticks, no TOP n, no IFNULL).",
+        "- Only SELECT statements. Never modify data.",
+        "- Use only the tables and columns listed above.",
+        "- Never use SELECT *; list the columns you need.",
+        "- Use the fewest tables possible. If one table has every column you need, do not join.",
+        "- When you do join, always give an explicit ON condition.",
+        f"- Add LIMIT (at most {policy.MAX_LIMIT}) unless the query is an aggregate.",
+        "- If the question cannot be answered with this schema, output exactly: CANNOT_ANSWER",
+    ]
+    return "\n".join(parts) + "\n"
+
+
+def extract_sql(text: str) -> str:
     text = text.strip()
 
     # Prefer a fenced code block if the model used one
@@ -69,81 +109,37 @@ def _extract_sql(text: str) -> str:
     return text.strip()
 
 
-def _call(user_message: str) -> str:
-    resp = _get_client().chat(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_message},
-        ],
-        options={"temperature": 0, "num_predict": 800},
-    )
-    return _extract_sql(resp["message"]["content"])
-
-
-def generate_sql(question: str) -> str:
-    return _call(f"Question: {question}")
-
-
-def repair_sql(question: str, bad_sql: str, reasons: list) -> str:
-    problems = "\n".join(f"- {r}" for r in reasons)
-    return _call(
-        f"Question: {question}\n\n"
-        f"This query was rejected:\n{bad_sql}\n\n"
-        f"Problems found:\n{problems}\n\n"
-        "Write a corrected query that answers the same question and fixes the problems. "
-        "Output only the SQL."
-    )
-
-
-# ---- Value hints: exact spellings of categorical values (schema linking) ----
-_HINT_COLUMNS = [("orders", "status"), ("products", "category"), ("customers", "city")]
-
-
-def _value_hints() -> str:
-    from app.guardrail.db import get_connection
-
-    lines = []
-    conn = get_connection()
-    try:
-        cur = conn.cursor()
-        for table, col in _HINT_COLUMNS:
-            cur.execute(
-                f"SELECT DISTINCT {col} FROM {table} WHERE {col} IS NOT NULL ORDER BY 1 LIMIT 21"
-            )
-            values = [r[0] for r in cur.fetchall()]
-            if 0 < len(values) <= 20:
-                lines.append(f"- {table}.{col}: " + ", ".join(repr(v) for v in values))
-    finally:
-        conn.rollback()
-        conn.close()
-    if not lines:
-        return ""
-    return (
-        "\nExact values stored in the data (copy these spellings exactly, they are case-sensitive):\n"
-        + "\n".join(lines)
-        + "\n"
-    )
-
-
-try:
-    SYSTEM_PROMPT += _value_hints()
-except Exception:
-    pass  # run without hints if the database is unreachable
-
-
-# ---- Retry wrapper: Ollama can fail to load the model temporarily ----
-import time as _time
-
-_raw_call = _call
-
-
-def _call(user_message: str) -> str:
+def chat(system: str, user_message: str, model: Optional[str] = None) -> str:
+    """Call Ollama, retrying a few times because a model can fail to load temporarily."""
     last_error = None
     for attempt in range(4):
         try:
-            return _raw_call(user_message)
+            resp = _get_client().chat(
+                model=model or MODEL,
+                messages=[{"role": "system", "content": system},
+                          {"role": "user", "content": user_message}],
+                options={"temperature": 0, "num_predict": 800},
+            )
+            return extract_sql(resp["message"]["content"])
         except Exception as e:
             last_error = e
-            _time.sleep(5 * (attempt + 1))
+            time.sleep(5 * (attempt + 1))
     raise last_error
+
+
+def generate_sql(question: str, snapshot: SchemaSnapshot, model: Optional[str] = None) -> str:
+    return chat(system_prompt(snapshot), f"Question: {question}", model)
+
+
+def repair_sql(question: str, bad_sql: str, problems: List[str], snapshot: SchemaSnapshot,
+               model: Optional[str] = None) -> str:
+    listed = "\n".join(f"- {p}" for p in problems)
+    return chat(
+        system_prompt(snapshot),
+        f"Question: {question}\n\n"
+        f"This query was rejected:\n{bad_sql}\n\n"
+        f"Problems found:\n{listed}\n\n"
+        "Write a corrected query that answers the same question and fixes the problems. "
+        "Output only the SQL.",
+        model,
+    )

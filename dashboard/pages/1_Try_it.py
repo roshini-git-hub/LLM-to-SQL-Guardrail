@@ -5,7 +5,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import streamlit as st
 
-from common import apply_style, call_api, explain_reason, show_response
+from common import apply_style, call_api, explain_reason, get_roles, show_response
 
 st.set_page_config(page_title="Try it", page_icon="\U0001F9EA", layout="wide")
 apply_style()
@@ -37,6 +37,12 @@ def set_value(key, value):
     st.session_state[key] = value
 
 
+role_choice = st.selectbox(
+    "Database user (role)", ["(default)"] + get_roles(),
+    help="Permissions are read live from PostgreSQL (GRANTs, row-level security). "
+         "The same question can be allowed for one role and blocked for another.")
+ROLE = None if role_choice == "(default)" else role_choice
+
 tab_ask, tab_sql = st.tabs(["\U0001F4AC Ask in plain English", "\U0001F4DD Paste SQL"])
 
 with tab_ask:
@@ -53,7 +59,7 @@ with tab_ask:
             st.warning("Type a question first, or click an example.")
         else:
             with st.spinner("The assistant is writing SQL and the guardrail is checking it..."):
-                data = call_api("/ask", {"question": question})
+                data = call_api("/ask", {"question": question, "role": ROLE})
             if data:
                 st.markdown("---")
                 show_response(data["final"])
@@ -83,7 +89,7 @@ with tab_sql:
             st.warning("Paste a SQL command first, or click an example.")
         else:
             with st.spinner("Checking..."):
-                data = call_api("/query", {"sql": sql})
+                data = call_api("/query", {"sql": sql, "role": ROLE})
             if data:
                 st.markdown("---")
                 show_response(data)

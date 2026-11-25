@@ -1,0 +1,5 @@
+db,setup,model,execution_success_pct,correct_pct,violations_let_through,unsafe_questions,avg_repairs,avg_latency_ms
+college_db,small_alone,qwen2.5:3b,90.0,65.0,4,6,0.0,3789.0
+college_db,small_guardrail_no_repair,qwen2.5:3b,90.0,70.0,0,6,0.0,2551.0
+college_db,small_plus_guardrail,qwen2.5:3b,100.0,75.0,0,6,0.1,2551.0
+college_db,large_alone,qwen2.5:7b,95.0,90.0,4,6,0.0,6754.0

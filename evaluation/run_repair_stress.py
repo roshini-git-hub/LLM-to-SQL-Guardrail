@@ -2,9 +2,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from app.guardrail import policy
+from app.guardrail.schema_loader import get_snapshot
 from app.guardrail.engine import run_query
-from app.guardrail.llm import MODEL, _extract_sql, _get_client, repair_sql
+from app.guardrail.llm import MODEL, _get_client, repair_sql
+from app.guardrail.llm import extract_sql as _extract_sql
 from app.guardrail.pipeline import MAX_REPAIRS, _is_repairable
 from evaluation.nl_benchmark import ANSWERABLE
 from evaluation.run_nl import fetch, norm_rows
@@ -15,7 +16,7 @@ DOCS = Path("docs")
 # Degraded first attempt: table names only, no columns
 WEAK_PROMPT = (
     "You translate questions into PostgreSQL SELECT queries. "
-    "The database has these tables: " + ", ".join(policy.ALLOWED_SCHEMA) + ". "
+    "The database has these tables: " + ", ".join(t.name for t in get_snapshot().accessible_tables()) + ". "
     "Output exactly one SQL query and nothing else. "
     "If the question cannot be answered, output exactly: CANNOT_ANSWER"
 )
@@ -56,7 +57,7 @@ def main():
         first = run_query(sql)
         resp, repairs = first, 0
         while _is_repairable(resp) and repairs < MAX_REPAIRS:
-            fixed = repair_sql(question, resp.sql, resp.reasons)
+            fixed = repair_sql(question, resp.sql, resp.reasons, get_snapshot())
             resp = run_query(fixed)
             repairs += 1
 

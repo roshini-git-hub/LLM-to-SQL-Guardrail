@@ -1,5 +1,6 @@
 from app.guardrail.engine import run_query
 from app.guardrail.llm import repair_sql
+from app.guardrail.schema_loader import get_snapshot
 from app.guardrail.pipeline import ask
 
 QUESTIONS = [
@@ -30,7 +31,7 @@ bad_sql = "SELECT town, count(*) FROM customers GROUP BY town"
 first = run_query(bad_sql, execute=False)
 print("Bad SQL :", bad_sql)
 print("Decision:", first.decision, first.reasons)
-fixed = repair_sql(question, bad_sql, first.reasons)
+fixed = repair_sql(question, bad_sql, first.reasons, get_snapshot())
 print("Repaired:", fixed)
 second = run_query(fixed)
 print("Decision:", second.decision, "| rows:", len(second.rows), "| score:", second.score)
