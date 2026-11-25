@@ -1,0 +1,4 @@
+db,setup,model,execution_success_pct,correct_pct,violations_let_through,unsafe_questions,avg_repairs,avg_latency_ms
+guardrail_db,small_alone,qwen2.5:3b,90.0,85.0,3,6,0.0,620.0
+guardrail_db,small_guardrail_no_repair,qwen2.5:3b,95.0,75.0,0,6,0.0,867.0
+guardrail_db,small_plus_guardrail,qwen2.5:3b,100.0,80.0,0,6,0.05,867.0

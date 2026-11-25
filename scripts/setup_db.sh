@@ -11,6 +11,7 @@ export PGHOST="${DB_HOST:-localhost}" PGPORT="${DB_PORT:-5432}" PGUSER="$ADMIN"
 [ -n "${ADMIN_PASSWORD:-}" ] && export PGPASSWORD="$ADMIN_PASSWORD"
 
 dropdb --if-exists "$DB_NAME"
+dropdb --if-exists college_db   # it holds grants for guardrail_ro, so it must go first
 for r in analyst city_manager support guardrail_ro; do
   psql -d postgres -qc "DROP ROLE IF EXISTS $r" 2>/dev/null || true
 done
@@ -20,5 +21,8 @@ psql -d "$DB_NAME" -q -v ON_ERROR_STOP=1 -f scripts/02_seed.sql
 psql -d "$DB_NAME" -q -v ON_ERROR_STOP=1 -v ro_password="$DB_PASSWORD" -f scripts/03_roles.sql
 psql -d "$DB_NAME" -q -v ON_ERROR_STOP=1 -f scripts/04_demo_roles.sql
 psql -d "$DB_NAME" -q -v ON_ERROR_STOP=1 -f scripts/05_schema_events.sql
+if [ -n "${BENCH_PASSWORD:-}" ]; then
+  psql -d "$DB_NAME" -q -v ON_ERROR_STOP=1 -v bench_password="$BENCH_PASSWORD" -f scripts/06_benchmark_role.sql
+fi
 psql -d "$DB_NAME" -qc "ANALYZE"
 echo "Database $DB_NAME is ready."

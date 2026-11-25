@@ -66,7 +66,7 @@ def analyse_plan(root: dict, snapshot: SchemaSnapshot) -> CostEstimate:
                     f"(~{rows} of ~{table_rows} rows)"
                 )
 
-        if node_type == "Nested Loop" and rows >= max(policy.CARTESIAN_MIN_ROWS, biggest):
+        if node_type == "Nested Loop" and rows >= policy.CARTESIAN_MIN_ROWS:
             has_condition = "Join Filter" in n or _descendants_have(n, "Index Cond")
             if not has_condition:
                 warnings.append("Possible cartesian product (join without a condition)")

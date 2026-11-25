@@ -31,11 +31,15 @@ FRIENDLY = {
     "select_star": "Asking for 'all columns' returns more than is usually needed.",
     "forbidden_function": "This uses a function that is not on the approved list",
     "missing_limit": "There is no limit on how many rows can come back.",
+    "table_not_found": "This uses a table that does not exist",
+    "column_not_found": "This uses a column that does not exist",
+    "sensitive_access": "This reads personal or sensitive data, so a person should approve it",
     "recursive_cte": "This is a self-repeating query that could run without end.",
 }
 
-WARN_RULES = {"select_star", "missing_limit"}
-DETAIL_RULES = {"blocked_table", "unknown_table", "sensitive_column", "forbidden_function"}
+WARN_RULES = {"select_star", "missing_limit", "sensitive_access"}
+DETAIL_RULES = {"blocked_table", "unknown_table", "sensitive_column", "forbidden_function",
+                "table_not_found", "column_not_found", "sensitive_access"}
 
 CSS = """
 <style>
@@ -65,6 +69,14 @@ html, body, [class*="css"] {font-size: 17px;}
 
 def apply_style():
     st.markdown(CSS, unsafe_allow_html=True)
+
+
+def get_roles():
+    """Database roles the guardrail may act as (empty list if the service is down)."""
+    try:
+        return requests.get(API + "/roles", timeout=5).json().get("roles", [])
+    except Exception:
+        return []
 
 
 def call_api(path: str, payload: dict):

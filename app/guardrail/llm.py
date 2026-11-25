@@ -25,17 +25,29 @@ def _get_client():
     return _client
 
 
+_SHORT_TYPES = (("timestamp", "timestamp"), ("character varying", "text"), ("character", "text"),
+                ("numeric", "numeric"), ("double precision", "numeric"), ("bigint", "integer"),
+                ("smallint", "integer"))
+
+
+def _short_type(pg_type: str) -> str:
+    for prefix, short in _SHORT_TYPES:
+        if pg_type.startswith(prefix):
+            return short
+    return pg_type
+
+
 def schema_text(snapshot: SchemaSnapshot) -> str:
     """One line per readable table, listing ONLY the columns this role can SELECT."""
     lines = []
     for t in sorted(snapshot.accessible_tables(), key=lambda t: t.name):
-        cols = ", ".join(c.name for c in t.visible_columns)
+        cols = ", ".join(f"{c.name} {_short_type(c.type)}" for c in t.visible_columns)
         lines.append(f"{t.name}({cols})")
     return "\n".join(lines)
 
 
 def relationships_text(snapshot: SchemaSnapshot) -> str:
-    return "\n".join(f"- JOIN ON {fk.describe()}" for fk in snapshot.usable_foreign_keys())
+    return "\n".join(f"- {fk.describe()}" for fk in snapshot.usable_foreign_keys())
 
 
 def value_hints_text(snapshot: SchemaSnapshot) -> str:
@@ -52,7 +64,8 @@ def system_prompt(snapshot: SchemaSnapshot) -> str:
     ]
     rel = relationships_text(snapshot)
     if rel:
-        parts += ["", "How tables join (use exactly these conditions):", rel]
+        parts += ["", "Foreign keys (only needed when a question requires columns from two "
+                      "tables; then join on exactly these):", rel]
     hints = value_hints_text(snapshot)
     if hints:
         parts += ["", "Exact values stored in the data (copy these spellings exactly, "
@@ -69,7 +82,8 @@ def system_prompt(snapshot: SchemaSnapshot) -> str:
         "- Only SELECT statements. Never modify data.",
         "- Use only the tables and columns listed above.",
         "- Never use SELECT *; list the columns you need.",
-        "- Always join with explicit conditions.",
+        "- Use the fewest tables possible. If one table has every column you need, do not join.",
+        "- When you do join, always give an explicit ON condition.",
         f"- Add LIMIT (at most {policy.MAX_LIMIT}) unless the query is an aggregate.",
         "- If the question cannot be answered with this schema, output exactly: CANNOT_ANSWER",
     ]

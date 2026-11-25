@@ -39,7 +39,7 @@ SEQ_SCAN_MIN_TABLE_ROWS = 10_000
 SEQ_SCAN_FRACTION = 0.5
 HUGE_ROWS_FACTOR = 5            # warn if a plan step produces > 5x the biggest table's rows
 HUGE_ROWS_FLOOR = 100_000
-CARTESIAN_MIN_ROWS = 1_000      # ignore tiny cross joins
+CARTESIAN_MIN_ROWS = 10_000     # ignore tiny cross joins
 
 # --- Risk decision ---------------------------------------------------------------------------
 REVIEW_AT = 35                  # risk score at or above this -> REVIEW

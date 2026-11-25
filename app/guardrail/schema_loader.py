@@ -169,9 +169,9 @@ SELECT n.nspname, c.relname, a.attname,
          AND has_column_privilege(c.oid, a.attnum, 'SELECT') AS can_select,
        col_description(c.oid, a.attnum),
        c.relrowsecurity,
-       GREATEST(c.reltuples, 0)::bigint,
-       c.relpages,
-       COALESCE(s.n_live_tup, 0)
+       -- planner statistics if the table was ANALYZEd, otherwise the live-row counter
+       (CASE WHEN c.reltuples >= 0 THEN c.reltuples ELSE COALESCE(s.n_live_tup, 0) END)::bigint,
+       c.relpages
 FROM pg_class c
 JOIN pg_namespace n ON n.oid = c.relnamespace
 JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0 AND NOT a.attisdropped
@@ -251,7 +251,7 @@ def load_snapshot(role: Optional[str] = None) -> SchemaSnapshot:
         tables: Dict[str, Table] = {}
         cur.execute(_COLUMNS_SQL)
         for (schema, tname, cname, ctype, can_select, comment,
-             rls, reltuples, relpages, live) in cur.fetchall():
+             rls, rows, relpages) in cur.fetchall():
             key = tname.lower()
             table = tables.get(key)
             if table is not None and table.schema != schema:
@@ -260,7 +260,7 @@ def load_snapshot(role: Optional[str] = None) -> SchemaSnapshot:
                 table = None
             if table is None:
                 table = tables[key] = Table(schema, tname, [], bool(rls),
-                                            max(int(reltuples), int(live)), int(relpages))
+                                            int(rows), int(relpages))
             table.columns.append(Column(cname, ctype, bool(can_select),
                                         looks_sensitive(cname, comment), comment))
 
