@@ -95,5 +95,5 @@ def ask_question(req: QuestionRequest, x_db_role: Optional[str] = Header(None)):
     """Natural language -> LLM -> guardrail -> repair loop -> result."""
     role = resolve_role(req.role, x_db_role)
     result = ask(req.question, role=role)
-    log_event("question", req.question, result.final, result.repairs_used)
+    log_event("question", req.question, result.final, result.repairs_used, result.trail)
     return result
