@@ -10,6 +10,7 @@ def log_event(kind: str, question, response, repairs_used: int = 0):
     record = {
         "ts": time.time(),
         "kind": kind,
+        "role": getattr(response, "role", None),
         "question": question,
         "sql": response.sql,
         "decision": response.decision,

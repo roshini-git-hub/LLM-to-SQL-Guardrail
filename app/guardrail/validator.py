@@ -2,8 +2,11 @@ import sqlglot
 from sqlglot import exp
 from sqlglot.errors import ParseError
 
+from typing import Optional
+
 from app.guardrail import policy
 from app.guardrail.models import ValidationResult
+from app.guardrail.schema_loader import SYSTEM_SCHEMAS, SchemaSnapshot, get_snapshot
 
 # SQL syntax that SQLGlot represents as "functions" but that is not a function call
 SYNTAX_NODES = (
@@ -12,7 +15,10 @@ SYNTAX_NODES = (
 )
 
 
-def validate(sql: str) -> ValidationResult:
+def validate(sql: str, snapshot: Optional[SchemaSnapshot] = None) -> ValidationResult:
+    """Check one SQL string against generic rules and the role's live schema snapshot."""
+    if snapshot is None:
+        snapshot = get_snapshot()
     result = ValidationResult(sql=sql)
 
     # 1. Parse into an AST (syntax check)
@@ -51,34 +57,75 @@ def validate(sql: str) -> ValidationResult:
     if tree.find(exp.Into):
         result.add("select_into", "block", "SELECT INTO is not allowed")
 
-    # 5. Tables
+    # 5. Tables: decided by what the role may read, as reported by the database
     cte_names = {c.alias_or_name.lower() for c in tree.find_all(exp.CTE)}
-    used_tables = set()
+    used = {}                      # alias or name -> Table from the snapshot
     for table in tree.find_all(exp.Table):
         name = table.name.lower()
-        if name in cte_names:
+        schema = (table.db or "").lower()
+        if not name or (not schema and name in cte_names):
             continue
-        used_tables.add(name)
-        if name in policy.BLOCKED_TABLES:
-            result.add("blocked_table", "block", f"Table '{name}' is not allowed")
-        elif name not in policy.ALLOWED_SCHEMA:
-            result.add("unknown_table", "block", f"Table '{name}' is not in the schema")
+        known = snapshot.table(name)
+        system = (schema in SYSTEM_SCHEMAS or schema.startswith("pg_")
+                  or (not schema and name.startswith("pg_")))
+        if system or (schema and (known is None or known.schema.lower() != schema)):
+            label = f"{schema}.{name}" if schema else name
+            result.add("unknown_table", "block", f"Table '{label}' is not in the allowed schema")
+        elif known is None:
+            result.add("table_not_found", "block", f"Table '{name}' does not exist")
+        elif not known.accessible:
+            result.add("blocked_table", "block",
+                       f"Table '{name}' is not allowed for role '{snapshot.role}'")
+        else:
+            used[table.alias_or_name.lower()] = known
+            used[name] = known
+    used_tables = {t.name.lower(): t for t in used.values()}
 
-    # 6. Columns
+    # 6. Columns: hidden (no GRANT) -> block; sensitive but granted -> warn; missing -> fixable
+    simple_scope = not cte_names and tree.find(exp.Subquery) is None and isinstance(tree, exp.Select)
+    select_aliases = {a.alias.lower() for a in tree.find_all(exp.Alias)}
+    reported = set()
     for col in tree.find_all(exp.Column):
+        if isinstance(col.this, exp.Star) or not col.name:
+            continue
         cname = col.name.lower()
-        if cname in policy.SENSITIVE_COLUMNS:
-            result.add("sensitive_column", "block", f"Column '{cname}' is restricted")
+        qual = (col.table or "").lower()
+        if qual and qual in used:
+            candidates = [used[qual]]
+        else:
+            candidates = list(used_tables.values())
+        found = [t.column(cname) for t in candidates if t.column(cname)]
+
+        if found and not any(c.can_select for c in found):
+            if ("hidden", cname) not in reported:
+                reported.add(("hidden", cname))
+                result.add("sensitive_column", "block",
+                           f"Column '{cname}' is restricted for role '{snapshot.role}'")
+        elif any(c.can_select and c.sensitive for c in found):
+            if ("pii", cname) not in reported:
+                reported.add(("pii", cname))
+                result.add("sensitive_access", "warn",
+                           f"Column '{cname}' holds personal or sensitive data")
+        elif (not found and simple_scope and candidates and cname not in select_aliases
+              and (not qual or qual in used)):
+            where = (f"table '{used[qual].name}'" if qual
+                     else "tables " + ", ".join(sorted(used_tables)))
+            result.add("column_not_found", "block", f"Column '{cname}' does not exist in {where}")
 
     # 7. Star expansion: * on a table with hidden columns would expose them
     stars = [s for s in tree.find_all(exp.Star) if not isinstance(s.parent, exp.Count)]
     if stars:
-        restricted = used_tables & policy.TABLES_WITH_HIDDEN_COLUMNS
+        restricted = sorted(n for n, t in used_tables.items() if t.hidden_columns)
         if restricted:
             result.add("star_on_restricted_table", "block",
-                       f"SELECT * would expose restricted columns of: {', '.join(sorted(restricted))}")
+                       f"SELECT * would expose restricted columns of: {', '.join(restricted)}")
         else:
             result.add("select_star", "warn", "SELECT * returns every column")
+            pii = sorted(n for n, t in used_tables.items()
+                         if any(c.sensitive for c in t.visible_columns))
+            if pii:
+                result.add("sensitive_access", "warn",
+                           f"SELECT * includes personal or sensitive columns of: {', '.join(pii)}")
 
     # 8. Functions: only allowlisted ones
     for func in tree.find_all(exp.Func):

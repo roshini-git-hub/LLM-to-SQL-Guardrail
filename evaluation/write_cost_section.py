@@ -3,7 +3,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from app.guardrail import policy
+from app.guardrail.schema_loader import get_snapshot
+
+_snap = get_snapshot()
+_COSTS = {"COST_LOW": round(_snap.cost_low), "COST_MEDIUM": round(_snap.cost_medium),
+          "COST_HIGH": round(_snap.cost_high)}
 
 R = Path("evaluation") / "results"
 OUT = Path("docs")
@@ -42,7 +46,7 @@ def ms_for(c):
 
 thr = []
 for name in ("COST_LOW", "COST_MEDIUM", "COST_HIGH"):
-    c = getattr(policy, name)
+    c = _COSTS[name]
     thr.append(f"| {name} | {c:,} | about {ms_for(c):,.0f} ms |")
 thr_table = "| Threshold | Planner cost | Estimated real time |\n|---|---|---|\n" + "\n".join(thr)
 
@@ -51,7 +55,7 @@ if len(timed):
     lowest = float(timed["planner_cost"].min())
     timeout_text = (
         f"The cheapest query that hit the 5-second timeout had planner cost {lowest:,.0f}, and COST_HIGH "
-        f"({policy.COST_HIGH:,}) lies just above it. The fitted line predicts only about "
+        f"({_COSTS['COST_HIGH']:,}) lies just above it. The fitted line predicts only about "
         f"{ms_for(lowest):,.0f} ms for that query, which shows the fit underestimates running time at high "
         "costs: timed-out queries (true time unknown) had to be left out, and they are the slowest ones."
     )

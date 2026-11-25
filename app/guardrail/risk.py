@@ -4,6 +4,7 @@ from typing import List, Optional
 from app.guardrail import policy
 from app.guardrail.cost import CostEstimate
 from app.guardrail.models import ValidationResult
+from app.guardrail.schema_loader import SchemaSnapshot
 
 
 @dataclass
@@ -13,7 +14,8 @@ class RiskAssessment:
     reasons: List[str] = field(default_factory=list)
 
 
-def assess(validation: ValidationResult, cost: Optional[CostEstimate]) -> RiskAssessment:
+def assess(validation: ValidationResult, cost: Optional[CostEstimate],
+           snapshot: Optional[SchemaSnapshot] = None) -> RiskAssessment:
     reasons = []
 
     # Hard rules: any blocking finding means BLOCK immediately
@@ -27,21 +29,24 @@ def assess(validation: ValidationResult, cost: Optional[CostEstimate]) -> RiskAs
 
     # Soft rules from the validator
     for f in validation.findings:
-        score += 10
+        score += policy.RULE_POINTS.get(f.rule, policy.SOFT_FINDING_POINTS)
         reasons.append(f"[{f.rule}] {f.message}")
 
-    # Cost-based points
-    if cost is not None:
-        if cost.max_cost >= policy.COST_HIGH:
+    # Cost-based points, relative to the size of this database
+    if cost is not None and snapshot is not None:
+        if cost.max_cost >= snapshot.cost_high:
             score += 40
-            reasons.append(f"Very high estimated cost ({cost.max_cost:,.0f})")
-        elif cost.max_cost >= policy.COST_MEDIUM:
+            reasons.append(f"Very high estimated cost ({cost.max_cost:,.0f}, "
+                           f"limit {snapshot.cost_high:,.0f})")
+        elif cost.max_cost >= snapshot.cost_medium:
             score += 25
-            reasons.append(f"High estimated cost ({cost.max_cost:,.0f})")
-        elif cost.max_cost >= policy.COST_LOW:
+            reasons.append(f"High estimated cost ({cost.max_cost:,.0f}, "
+                           f"limit {snapshot.cost_medium:,.0f})")
+        elif cost.max_cost >= snapshot.cost_low:
             score += 10
             reasons.append(f"Moderate estimated cost ({cost.max_cost:,.0f})")
 
+    if cost is not None:
         plan_points = min(45, 15 * len(cost.warnings))
         score += plan_points
         reasons.extend(cost.warnings)

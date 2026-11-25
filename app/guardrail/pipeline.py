@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 from app.guardrail.engine import GuardrailResponse, run_query
 from app.guardrail.llm import generate_sql, repair_sql
+from app.guardrail.schema_loader import get_snapshot
 
 MAX_REPAIRS = 2
 
@@ -32,26 +33,26 @@ def _is_repairable(resp: GuardrailResponse) -> bool:
     return True
 
 
-def ask(question: str) -> AskResult:
-    sql = generate_sql(question)
+def ask(question: str, role: Optional[str] = None, model: Optional[str] = None) -> AskResult:
+    snapshot = get_snapshot(role)
+    sql = generate_sql(question, snapshot, model)
 
     if sql.strip() == "CANNOT_ANSWER":
         refusal = GuardrailResponse(
             sql, "BLOCK", 100,
-            ["The question cannot be answered within the allowed schema"],
+            ["The question cannot be answered within the allowed schema"], role=role,
         )
         return AskResult(question, refusal, [refusal], 0)
 
     attempts = []
-    resp = run_query(sql)
+    resp = run_query(sql, role=role)
     attempts.append(resp)
 
     repairs = 0
     while _is_repairable(resp) and repairs < MAX_REPAIRS:
-        sql = repair_sql(question, resp.sql, resp.reasons)
-        resp = run_query(sql)
+        sql = repair_sql(question, resp.sql, resp.reasons, snapshot, model)
+        resp = run_query(sql, role=role)
         attempts.append(resp)
         repairs += 1
 
     return AskResult(question, resp, attempts, repairs)
-

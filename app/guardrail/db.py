@@ -9,7 +9,7 @@ import threading
 from contextlib import contextmanager
 
 import psycopg2
-from psycopg2 import pool
+from psycopg2 import pool, sql
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -51,11 +51,16 @@ def close_pool():
 
 
 class PooledConnection:
-    """Looks like a normal psycopg2 connection, but close() returns it to the pool."""
+    """Looks like a normal psycopg2 connection, but close() returns it to the pool.
 
-    def __init__(self, conn, owner):
+    If a role is given the session runs as that role (SET ROLE), so PostgreSQL itself applies
+    that role's GRANTs and row-level security to everything the connection does.
+    """
+
+    def __init__(self, conn, owner, role=None):
         self._conn = conn
         self._owner = owner
+        self._role = role
 
     def __getattr__(self, name):
         return getattr(self._conn, name)
@@ -63,29 +68,51 @@ class PooledConnection:
     def close(self):
         if self._conn is None:
             return
-        try:
-            if not self._conn.closed:
-                self._conn.rollback()
-        finally:
-            self._owner.putconn(self._conn, close=bool(self._conn.closed))
-            self._conn = None
+        conn = self._conn
+        self._conn = None
+        broken = bool(conn.closed)
+        if not broken:
+            try:
+                conn.rollback()
+                if self._role:
+                    cur = conn.cursor()
+                    cur.execute("RESET ROLE")
+                    conn.commit()
+            except Exception:
+                broken = True  # never hand a connection with an unknown role back to the pool
+        self._owner.putconn(conn, close=broken)
 
 
-def get_connection() -> PooledConnection:
+def get_connection(role: str = None) -> PooledConnection:
     p = _get_pool()
     for _ in range(3):
         conn = p.getconn()
-        if not conn.closed:
-            return PooledConnection(conn, p)
-        p.putconn(conn, close=True)  # dead connection (e.g. server restarted), try another
+        if conn.closed:
+            p.putconn(conn, close=True)  # dead connection (e.g. server restarted), try another
+            continue
+        pooled = PooledConnection(conn, p, role)
+        if role:
+            try:
+                cur = conn.cursor()
+                cur.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(role)))
+                conn.commit()  # commit so a later rollback cannot silently undo the role
+            except Exception:
+                pooled.close()
+                raise
+        return pooled
     raise psycopg2.OperationalError("Could not get a live database connection")
 
 
 @contextmanager
-def connection():
-    """Use as: with connection() as conn: ...  The connection always goes back to the pool."""
-    conn = get_connection()
+def connection(role: str = None):
+    """Use as: with connection(role) as conn: ...  The connection always goes back to the pool."""
+    conn = get_connection(role)
     try:
         yield conn
     finally:
         conn.close()
+
+
+def new_connection():
+    """A dedicated, non-pooled connection (used for LISTEN, which must stay open)."""
+    return psycopg2.connect(**_connect_args())

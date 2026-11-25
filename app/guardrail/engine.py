@@ -9,6 +9,7 @@ from app.guardrail import policy
 from app.guardrail.cost import estimate_cost
 from app.guardrail.db import connection
 from app.guardrail.risk import assess
+from app.guardrail.schema_loader import get_snapshot
 from app.guardrail.validator import validate
 
 
@@ -21,6 +22,7 @@ class GuardrailResponse:
     columns: List[str] = field(default_factory=list)
     rows: List[Any] = field(default_factory=list)
     elapsed_ms: Optional[float] = None
+    role: Optional[str] = None
 
 
 def apply_row_limit(sql: str, max_limit: int = policy.MAX_LIMIT) -> str:
@@ -41,34 +43,37 @@ def apply_row_limit(sql: str, max_limit: int = policy.MAX_LIMIT) -> str:
     return tree.limit(max_limit, copy=False).sql(dialect="postgres")
 
 
-def run_query(sql: str, execute: bool = True) -> GuardrailResponse:
-    # Layer 1: AST validation and policy
-    validation = validate(sql)
+def run_query(sql: str, execute: bool = True, role: Optional[str] = None) -> GuardrailResponse:
+    """Run one SQL string through all guardrail layers, as `role` (None = the login role)."""
+    snapshot = get_snapshot(role)
+
+    # Layer 1: AST validation against the role's live schema snapshot
+    validation = validate(sql, snapshot)
     if validation.blocked:
         risk = assess(validation, None)
-        return GuardrailResponse(sql, risk.decision, risk.score, risk.reasons)
+        return GuardrailResponse(sql, risk.decision, risk.score, risk.reasons, role=role)
 
     # Layer 2: cost estimation (EXPLAIN only, nothing is executed)
     try:
-        cost = estimate_cost(sql)
+        cost = estimate_cost(sql, snapshot, role)
     except Exception as e:
         reason = "Planner rejected the query: " + str(e).splitlines()[0]
-        return GuardrailResponse(sql, "BLOCK", 100, [reason])
+        return GuardrailResponse(sql, "BLOCK", 100, [reason], role=role)
 
-    # Layer 3: risk decision
-    risk = assess(validation, cost)
+    # Layer 3: risk decision (cost thresholds are relative to this database's size)
+    risk = assess(validation, cost, snapshot)
     if risk.decision != "ALLOW" or not execute:
-        return GuardrailResponse(sql, risk.decision, risk.score, risk.reasons)
+        return GuardrailResponse(sql, risk.decision, risk.score, risk.reasons, role=role)
 
-    # Layer 4: safe execution with row limit (role also enforces timeout and read-only)
+    # Layer 4: safe execution with row limit (connection is read-only with a statement timeout)
     try:
         guarded = apply_row_limit(sql)
     except Exception as e:
-        return GuardrailResponse(sql, "BLOCK", risk.score,
-                                 risk.reasons + ["Could not apply row limit: " + str(e).splitlines()[0]])
+        return GuardrailResponse(sql, "BLOCK", risk.score, risk.reasons +
+                                 ["Could not apply row limit: " + str(e).splitlines()[0]], role=role)
 
     try:
-        with connection() as conn:
+        with connection(role) as conn:
             cur = conn.cursor()
             start = time.perf_counter()
             cur.execute(guarded)
@@ -76,7 +81,7 @@ def run_query(sql: str, execute: bool = True) -> GuardrailResponse:
             elapsed = (time.perf_counter() - start) * 1000
             columns = [d[0] for d in cur.description]
     except Exception as e:
-        return GuardrailResponse(sql, "BLOCK", risk.score,
-                                 risk.reasons + ["Execution failed: " + str(e).splitlines()[0]])
+        return GuardrailResponse(sql, "BLOCK", risk.score, risk.reasons +
+                                 ["Execution failed: " + str(e).splitlines()[0]], role=role)
 
-    return GuardrailResponse(sql, "ALLOW", risk.score, risk.reasons, columns, rows, elapsed)
+    return GuardrailResponse(sql, "ALLOW", risk.score, risk.reasons, columns, rows, elapsed, role)
