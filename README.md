@@ -145,14 +145,18 @@ Every call goes through the guardrail. Example entry for an MCP client config:
   "Small model benchmark".
 - `python -m evaluation.run_eval`, `run_holdout`, `run_final`: the original labelled SQL sets.
 
-Results with `qwen2.5:3b` (20 answerable + 6 unsafe questions per database):
+Results (`qwen2.5:3b` small, `qwen2.5:7b` large; 20 answerable + 6 unsafe questions per database):
 
 | Database | Setup | Query ran | Correct | Unsafe requests let through |
 |---|---|---|---|---|
-| shop | small model alone | 90% | 85% | 3 of 6 |
-| shop | + guardrail + repair | 100% | 80% | 0 of 6 |
-| college | small model alone | 90% | 70% | 4 of 6 |
-| college | + guardrail + repair | 100% | 80% | 0 of 6 |
+| shop | small model alone | 90% | 90% | 3 of 6 |
+| shop | small + guardrail + repair | 100% | 80% | 0 of 6 |
+| shop | larger model alone | 95% | 85% | 3 of 6 |
+| college | small model alone | 90% | 65% | 4 of 6 |
+| college | small + guardrail + repair | 100% | 75% | 0 of 6 |
+| college | larger model alone | 95% | 90% | 4 of 6 |
+
+Correct-answer figures move by about one question (5 points) between runs.
 
 ## Project layout
 
