@@ -46,11 +46,5 @@ ALLOWED_FUNCTIONS |= {
     "substring", "replace", "greatest", "least", "floor", "ceil",
 }
 
-# --- Added after the final evaluation (not measured on the final set) ---
-ALLOWED_FUNCTIONS |= {
-    "nullif", "trim", "ltrim", "rtrim", "concat", "group_concat", "string_agg",
-    "substring", "replace", "greatest", "least", "floor", "ceil",
-}
-
 # Tables that have columns hidden from this role (SELECT * would expand into them)
 TABLES_WITH_HIDDEN_COLUMNS = {"customers"}

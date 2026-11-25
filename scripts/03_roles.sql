@@ -1,4 +1,8 @@
-CREATE ROLE guardrail_ro LOGIN PASSWORD '123';
+-- Run with the password passed in from the environment (never hard-coded here):
+--   psql -d guardrail_db -v ro_password="$DB_PASSWORD" -f scripts/03_roles.sql
+-- or use scripts/setup_db.sh which does this for you.
+
+CREATE ROLE guardrail_ro LOGIN PASSWORD :'ro_password';
 
 GRANT CONNECT ON DATABASE guardrail_db TO guardrail_ro;
 GRANT USAGE ON SCHEMA public TO guardrail_ro;

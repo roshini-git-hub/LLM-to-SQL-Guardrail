@@ -2,9 +2,12 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, List, Optional
 
+import sqlglot
+from sqlglot import exp
+
 from app.guardrail import policy
 from app.guardrail.cost import estimate_cost
-from app.guardrail.db import get_connection
+from app.guardrail.db import connection
 from app.guardrail.risk import assess
 from app.guardrail.validator import validate
 
@@ -18,6 +21,24 @@ class GuardrailResponse:
     columns: List[str] = field(default_factory=list)
     rows: List[Any] = field(default_factory=list)
     elapsed_ms: Optional[float] = None
+
+
+def apply_row_limit(sql: str, max_limit: int = policy.MAX_LIMIT) -> str:
+    """Return the query with a LIMIT of at most max_limit, edited through the SQLGlot AST.
+
+    - no LIMIT                      -> add LIMIT max_limit
+    - LIMIT n with n <= max_limit   -> keep the query's own limit
+    - LIMIT n with n > max_limit    -> lower it to max_limit
+    - LIMIT ALL / FETCH FIRST / any non-numeric limit -> replace with max_limit
+    The query itself is never wrapped in a subquery, so duplicate column names still work.
+    """
+    tree = sqlglot.parse_one(sql, read="postgres")
+    limit = tree.args.get("limit")
+    value = limit.expression if isinstance(limit, exp.Limit) else None
+    if isinstance(value, exp.Literal) and value.is_int and int(value.this) <= max_limit:
+        return tree.sql(dialect="postgres")
+    tree.set("limit", None)
+    return tree.limit(max_limit, copy=False).sql(dialect="postgres")
 
 
 def run_query(sql: str, execute: bool = True) -> GuardrailResponse:
@@ -40,20 +61,22 @@ def run_query(sql: str, execute: bool = True) -> GuardrailResponse:
         return GuardrailResponse(sql, risk.decision, risk.score, risk.reasons)
 
     # Layer 4: safe execution with row limit (role also enforces timeout and read-only)
-    guarded = f"SELECT * FROM ({sql.strip().rstrip(';')}) AS guarded LIMIT {policy.MAX_LIMIT}"
-    conn = get_connection()
     try:
-        cur = conn.cursor()
-        start = time.perf_counter()
-        cur.execute(guarded)
-        rows = cur.fetchall()
-        elapsed = (time.perf_counter() - start) * 1000
-        columns = [d[0] for d in cur.description]
+        guarded = apply_row_limit(sql)
+    except Exception as e:
+        return GuardrailResponse(sql, "BLOCK", risk.score,
+                                 risk.reasons + ["Could not apply row limit: " + str(e).splitlines()[0]])
+
+    try:
+        with connection() as conn:
+            cur = conn.cursor()
+            start = time.perf_counter()
+            cur.execute(guarded)
+            rows = cur.fetchall()
+            elapsed = (time.perf_counter() - start) * 1000
+            columns = [d[0] for d in cur.description]
     except Exception as e:
         return GuardrailResponse(sql, "BLOCK", risk.score,
                                  risk.reasons + ["Execution failed: " + str(e).splitlines()[0]])
-    finally:
-        conn.rollback()
-        conn.close()
 
     return GuardrailResponse(sql, "ALLOW", risk.score, risk.reasons, columns, rows, elapsed)

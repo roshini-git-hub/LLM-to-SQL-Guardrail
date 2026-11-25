@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from app.guardrail import policy
-from app.guardrail.db import get_connection
+from app.guardrail.db import connection
 
 
 @dataclass
@@ -29,17 +29,13 @@ def _descendants_have(node, key):
 
 
 def estimate_cost(sql: str) -> CostEstimate:
-    conn = get_connection()
-    try:
+    with connection() as conn:
         cur = conn.cursor()
         cur.execute("EXPLAIN (FORMAT JSON) " + sql)
         raw = cur.fetchone()[0]
-        if isinstance(raw, str):
-            raw = json.loads(raw)
-        root = raw[0]["Plan"]
-    finally:
-        conn.rollback()
-        conn.close()
+    if isinstance(raw, str):
+        raw = json.loads(raw)
+    root = raw[0]["Plan"]
 
     nodes = []
     _walk(root, nodes)
